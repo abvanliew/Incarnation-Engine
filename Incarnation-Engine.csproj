@@ -84,7 +84,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Core\IESM.cs" />
+    <Compile Include="Assets\Scripts\Core\INEConst.cs" />
+    <Compile Include="Assets\Scripts\Core\INECore.cs" />
+    <Compile Include="Assets\Scripts\Core\INESound.cs" />
+    <Compile Include="Assets\Scripts\Utility\ComplexPolyFunct.cs" />
+    <Compile Include="Assets\Scripts\Utility\PolynomialFunct.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Plugins\FMOD\LICENSE.TXT" />

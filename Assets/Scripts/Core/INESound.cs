@@ -3,14 +3,15 @@ using System.Collections.Generic;
 
 namespace IncarnationEngine
 {
-    public class IESM : MonoBehaviour
+    public class INESound : MonoBehaviour
     {
-        public static IESM act;
+        public static INESound act;
         
         FMOD.Studio.Bus MasterBus;
 
-        Dictionary<string, FMODEvent> events = new Dictionary<string, FMODEvent>();
-        Dictionary<string, parm> parms = new Dictionary<string, parm>();
+        Dictionary<string, FMODEvent> events;
+        Dictionary<string, FMODparm> parms;
+        public List<FMODSound> playing { get; private set; }
 
         //validate there there is only 1 instance of this game object
         void Awake()
@@ -29,39 +30,25 @@ namespace IncarnationEngine
             
             //set master bus
             MasterBus = FMODUnity.RuntimeManager.GetBus("bus:/");
+            playing = new List<FMODSound>();
+            events = new Dictionary<string, FMODEvent>();
+            parms = new Dictionary<string, FMODparm>();
         }
 
         void Start()
         {
-            
+            //populate list of parms
+            //populate list of events
         }
 
-        private void PlayFMOD(string eventPath, parm[] parms = null)
+        public void SetParmValue(string parmKey, float parmValue)
         {
-            FMOD.Studio.EventInstance e;
-
-            e = FMODUnity.RuntimeManager.CreateInstance(eventPath);
-            e.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(transform.position));
-
-            if (parms != null && parms.Length > 0)
-                AddParameters(e, parms);
-
-            e.start();
-            e.release();
-        }
-
-        private void AddParameters(FMOD.Studio.EventInstance e, parm[] parms)
-        {
-            FMOD.Studio.ParameterInstance parmPass;
-
-            if (parms != null && parms.Length > 0)
+            if (parms.ContainsKey(parmKey) 
+                && parms[parmKey].Min >= parmValue && parms[parmKey].Max <= parmValue)
             {
-                for (int i = 0; i < parms.Length; i++)
-                {
-                    e.getParameter(parms[i].Name, out parmPass);
-                    if (parmPass != null)
-                        parmPass.setValue(parms[i].Value);
-                }
+                FMODparm newParm = parms[parmKey];
+                newParm.Value = parmValue;
+                parms[parmKey] = newParm;
             }
         }
 
@@ -80,25 +67,21 @@ namespace IncarnationEngine
         {
             FMODUnity.RuntimeManager.MuteAllEvents(state);
         }
-
-        /*
-        public void Move()
+        
+        public void PlayOnce(string eventKey)
         {
-            parm[] parms = new parm[] { _phase, _running };
-
-            PlayFMOD("event:/character/movement/footsteps", parms);
+            //FMODSound e;
         }
-        */
     }
 
-    public struct parm
+    public struct FMODparm
     {
         public string Name;
         public float Value;
         public float Min;
         public float Max;
 
-        public parm(string newName, float newValue, float newMin, float newMax )
+        public FMODparm(string newName, float newValue, float newMin, float newMax )
         {
             Name = newName;
             Value = newValue;
@@ -109,28 +92,35 @@ namespace IncarnationEngine
 
     public class FMODEvent
     {
+        string eventPath;
+        List<string> parmKeys = new List<string>();
+
+        FMODEvent(string newPath)
+        {
+            eventPath = newPath;
+            parmKeys = null;
+        }
+
+        FMODEvent(string newPath, List<string> newParms)
+        {
+            eventPath = newPath;
+            parmKeys = newParms;
+        }
+    }
+
+    public class FMODSound
+    {
         FMOD.Studio.EventInstance e;
-        public List<string> parmKeys = new List<string>();
+        public string eventKey { get; private set; }
 
-        public FMODEvent() { }
-
-        public FMODEvent(string eventPath)
+        public FMODSound(string eventPath, string newKey)
         {
             e = FMODUnity.RuntimeManager.CreateInstance(eventPath);
+            if (e != null)
+                eventKey = newKey;
         }
 
-        public FMODEvent(string eventPath, List<string> newKeys)
-        {
-            e = FMODUnity.RuntimeManager.CreateInstance(eventPath);
-            parmKeys = newKeys;
-        }
-
-        public void SetEvent(string eventPath)
-        {
-            e = FMODUnity.RuntimeManager.CreateInstance(eventPath);
-        }
-
-        public void AddParameters(parm[] parms)
+        public void AddParameters(FMODparm[] parms)
         {
             if (e != null)
             {
@@ -151,9 +141,13 @@ namespace IncarnationEngine
         public void SetPosistion(Vector3 newValue)
         {
             if (e != null)
-            {
                 e.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(newValue));
-            }
+        }
+
+        public void SetVolume(float newValue)
+        {
+            if (e != null && newValue >= 0.0f && newValue <= 1.0f)
+                e.setVolume(newValue);
         }
 
         public void Play()
@@ -166,12 +160,6 @@ namespace IncarnationEngine
         {
             if (e != null)
                 e.release();
-        }
-
-        public void SetVolume(float newValue)
-        {
-            if (e != null && newValue >= 0.0f && newValue <= 1.0f)
-                e.setVolume(newValue);
         }
 
         public void Pause(bool state = true)
