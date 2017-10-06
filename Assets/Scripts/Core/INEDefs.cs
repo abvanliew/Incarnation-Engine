@@ -23,5 +23,12 @@ namespace IncarnationEngine
                 //removes duplicates
                 Destroy(gameObject);
         }
+        
+        public void init()
+        {
+            //start up stuff here
+        }
+        
+        
     }
 }
