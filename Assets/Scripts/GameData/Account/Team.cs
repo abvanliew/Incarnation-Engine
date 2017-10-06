@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace IncarnationEngine
 {
-    public class Team : MonoBehaviour
+    public class Team
     {
         void Start()
         {
