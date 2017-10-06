@@ -4,8 +4,11 @@ using UnityEngine;
 
 namespace IncarnationEngine
 {
-    public class INECore : MonoBehaviour
+    public class Team : MonoBehaviour
     {
-    
+        void Start()
+        {
+            
+        }
     }
 }
