@@ -4,11 +4,8 @@ using UnityEngine;
 
 namespace IncarnationEngine
 {
-    public class Race : MonoBehaviour
+    public class Race
     {
-        void Start()
-        {
-            
-        }
+        
     }
 }
