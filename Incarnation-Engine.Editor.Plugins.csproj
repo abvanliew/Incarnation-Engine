@@ -271,6 +271,27 @@
     <Reference Include="UnityEditor.Purchasing">
       <HintPath>Library\UnityAssemblies\UnityEditor.Purchasing.dll</HintPath>
     </Reference>
+    <Reference Include="AWSSDK.CognitoIdentity">
+      <HintPath>Assets\AWSSDK\AWSSDK.CognitoIdentity.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.CognitoSync">
+      <HintPath>Assets\AWSSDK\AWSSDK.CognitoSync.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.Core">
+      <HintPath>Assets\AWSSDK\AWSSDK.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.IdentityManagement">
+      <HintPath>Assets\AWSSDK\AWSSDK.IdentityManagement.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.SecurityToken">
+      <HintPath>Assets\AWSSDK\AWSSDK.SecurityToken.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.SQS">
+      <HintPath>Assets\AWSSDK\AWSSDK.SQS.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.S3">
+      <HintPath>Assets\AWSSDK\AWSSDK.S3.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Incarnation-Engine.Plugins.csproj">
@@ -305,6 +326,8 @@
     <Compile Include="Assets\Plugins\Editor\FMOD\StudioParameterTriggerEditor.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Examples\License.txt" />
+    <None Include="Assets\Plugins\Android\AndroidManifest.xml" />
     <None Include="Assets\Plugins\FMOD\LICENSE.TXT" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
