@@ -1,57 +1,30 @@
-﻿using UnityEngine;
-using System;
-using System.Collections.Generic;
-
+﻿using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using UnityEngine;
 using Amazon;
-using Amazon.CognitoIdentity;
-using Amazon.CognitoSync;
-using Amazon.CognitoSync.SyncManager;
-
+using Amazon.Extensions.CognitoAuthentication;
 
 namespace IncarnationEngine
 {
-    public class INECore : MonoBehaviour
+    [Serializable] public class INECore : MonoBehaviour
     {
         public static INECore act;
-        private Dataset TestData;
+        private INEAuthorizor auth;
 
-        string IdentityPoolId = "us-east-1_qDlRDAqit";
-        string Region = RegionEndpoint.USEast1.SystemName;
-        public string MainData;
-        public bool SaveData;
-        public bool SyncData;
+        public INEInterface ui;
+        public string CurrentData;
+        public string DisplayName
+        { get { return auth != null ? auth.DisplayName : ""; } }
 
-        private RegionEndpoint _Region
-        {
-            get { return RegionEndpoint.GetBySystemName( Region ); }
-        }
-
-        private CognitoAWSCredentials _credentials;
-        private CognitoAWSCredentials Credentials
-        {
-            get
-            {
-                if( _credentials == null )
-                    _credentials = new CognitoAWSCredentials( IdentityPoolId, _Region );
-                return _credentials;
-            }
-        }
-
-        private CognitoSyncManager _syncManager;
-        private CognitoSyncManager SyncManager
-        {
-            get
-            {
-                if( _syncManager == null )
-                {
-                    _syncManager = new CognitoSyncManager( Credentials, new AmazonCognitoSyncConfig { RegionEndpoint = _Region } );
-                }
-                return _syncManager;
-            }
-        }
+        private string SessionPath;
+        RegionEndpoint DefaultEndpoint = RegionEndpoint.USEast1;
+        string DefaultPoolID = "us-east-1_qDlRDAqit";
+        string DefaultClientID = "69qjjs5euih1kok6cdjvru1r6o";
+        string DefaultRequestURL = "https://6zq8xeebml.execute-api.us-east-1.amazonaws.com/dev/";
 
         //validate there there is only 1 instance of this game object
-        void Awake()
+        private void Awake()
         {
             if( act == null )
             {
@@ -61,108 +34,108 @@ namespace IncarnationEngine
                 //ensures that the static reference is correct
                 act = this;
             }
+            //removes duplicates
             else if( act != this )
-                //removes duplicates
                 Destroy( gameObject );
         }
 
-        void Start()
+        private void Start()
         {
-            UnityInitializer.AttachToGameObject( this.gameObject );
-
-            TestData = SyncManager.OpenOrCreateDataset( "TestData" );
-
-            MainData = "test 1";
-
-            TestData.OnSyncSuccess += this.HandleSyncSuccess;
-            TestData.OnSyncFailure += this.HandleSyncFailure;
-            TestData.OnSyncConflict = this.HandleSyncConflict;
-            TestData.OnDatasetMerged = this.HandleDatasetMerged;
-            TestData.OnDatasetDeleted = this.HandleDatasetDeleted;
+            SessionPath = Application.persistentDataPath + "/session.dat";
+            DefaultEndpoint = RegionEndpoint.USEast1;
+            DefaultPoolID = "us-east-1_qDlRDAqit";
+            DefaultClientID = "69qjjs5euih1kok6cdjvru1r6o";
+            DefaultRequestURL = "https://6zq8xeebml.execute-api.us-east-1.amazonaws.com/dev";
+            LoadAuthorizer();
         }
 
-        void Update()
+        public async void Login( string username, string password )
         {
-            if( SaveData )
+            auth = new INEAuthorizor( DefaultEndpoint, DefaultPoolID, DefaultClientID, username );
+            bool authorized = await auth.Login( password );
+
+            if( authorized )
             {
-                TestData.Put( "MainData", MainData );
-
-                SaveData = false;
-            }
-
-            if( SyncData )
-            {
-                TestData.SynchronizeAsync();
-
-                SyncData = false;
+                ui.LoginPanel.SetActive( false );
+                ui.TestData.SetActive( true );
+                SaveAuthorizer();
             }
         }
 
-        private bool HandleDatasetDeleted( Dataset dataset )
+        public void SignOut()
         {
-            Debug.Log( dataset.Metadata.DatasetName + " Dataset has been deleted" );
-
-            // Clean up if necessary 
-
-            // returning true informs the corresponding dataset can be purged in the local storage and return false retains the local dataset
-            return true;
-        }
-
-        public bool HandleDatasetMerged( Dataset dataset, List<string> datasetNames )
-        {
-            Debug.Log( dataset + " Dataset needs merge" );
-            // returning true allows the Synchronize to resume and false cancels it
-            return true;
-        }
-
-        private bool HandleSyncConflict( Amazon.CognitoSync.SyncManager.Dataset dataset, List<SyncConflict> conflicts )
-        {
-            Debug.Log( "OnSyncConflict" );
-            List<Amazon.CognitoSync.SyncManager.Record> resolvedRecords = new List<Amazon.CognitoSync.SyncManager.Record>();
-
-            foreach( SyncConflict conflictRecord in conflicts )
+            if( auth != null )
             {
-                // This example resolves all the conflicts using ResolveWithRemoteRecord 
-                // SyncManager provides the following default conflict resolution methods:
-                //      ResolveWithRemoteRecord - overwrites the local with remote records
-                //      ResolveWithLocalRecord - overwrites the remote with local records
-                //      ResolveWithValue - for developer logic  
-                resolvedRecords.Add( conflictRecord.ResolveWithRemoteRecord() );
+                auth.SignOut();
+                ui.TestData.SetActive( false );
+                ui.LoginPanel.SetActive( true );
+            }
+        }
+
+        public void GetData()
+        {
+            if( auth != null )
+                StartCoroutine( auth.GetData( DefaultRequestURL ) );
+        }
+
+        private async void LoadAuthorizer()
+        {
+            bool authorized = false;
+
+            if( File.Exists( SessionPath ) )
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                FileStream file = File.Open( SessionPath, FileMode.Open );
+                INESession session = (INESession)bf.Deserialize( file );
+                file.Close();
+
+                auth = new INEAuthorizor( session.Endpoint, session.PoolID, session.ClientID, session.Username );
+                authorized = await auth.Login( session.Password );
+
+                if( !authorized )
+                    File.Delete( SessionPath );
             }
 
-            // resolves the conflicts in local storage
-            dataset.Resolve( resolvedRecords );
-
-            // on return true the synchronize operation continues where it left,
-            //      returning false cancels the synchronize operation
-            return true;
-        }
-
-        private void HandleSyncSuccess( object sender, SyncSuccessEventArgs e )
-        {
-
-            var dataset = sender as Dataset;
-
-            if( dataset.Metadata != null )
+            if( !authorized )
             {
-                Debug.Log( "Successfully synced for dataset: " + dataset.Metadata );
+                auth = null;
+                ui.LoginPanel.SetActive( true );
             }
             else
-            {
-                Debug.Log( "Successfully synced for dataset" );
-            }
-
-            if( dataset == TestData )
-            {
-                MainData = string.IsNullOrEmpty( TestData.Get( "MainData" ) ) ? "Test 1" : dataset.Get( "MainData" );
-            }
+                ui.TestData.SetActive( true );
         }
 
-        private void HandleSyncFailure( object sender, SyncFailureEventArgs e )
+        private async void SaveAuthorizer()
         {
-            var dataset = sender as Dataset;
-            Debug.Log( "Sync failed for dataset : " + dataset.Metadata.DatasetName );
-            Debug.LogException( e.Exception );
+            bool live = await auth.Connected();
+
+            if( live )
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                FileStream file = File.Create( SessionPath );
+                bf.Serialize( file, auth.SaveSession );
+                file.Close();
+            }
+        }
+    }
+
+    [Serializable]
+    public class INESession
+    {
+        public RegionEndpoint Endpoint { get { return RegionEndpoint.GetBySystemName( EndpointName ); } }
+        [SerializeField] private readonly string EndpointName;
+        [SerializeField] public readonly string PoolID;
+        [SerializeField] public readonly string ClientID;
+        [SerializeField] public readonly string Username;
+        [SerializeField] public readonly string Password;
+
+        public INESession( RegionEndpoint endpoint, string poolID, string clientID, string username, string password )
+        {
+            EndpointName = endpoint.SystemName;
+            PoolID = poolID;
+            ClientID = clientID;
+            Username = username;
+            Password = password;
         }
     }
 }
