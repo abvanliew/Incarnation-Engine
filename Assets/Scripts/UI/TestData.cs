@@ -10,12 +10,12 @@ namespace IncarnationEngine
 
         private void Update()
         {
-            TestText.text = INECore.act.CurrentData;
+            //TestText.text = INE.Act.CurrentData;
         }
 
         public void ClickTest()
         {
-            INECore.act.GetData();
+            //INE.GetData<INETeam>( "team/list/" );
         }
     }
 }

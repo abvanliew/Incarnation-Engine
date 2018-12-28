@@ -70,7 +70,7 @@ namespace IncarnationEngine
             }
             else
             {
-                INECore.act.Login( UsernameInput.text, PasswordInput.text );
+                INE.Login( UsernameInput.text, PasswordInput.text );
             }
         }
     }

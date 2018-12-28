@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -8,6 +9,8 @@ using Amazon.Runtime;
 using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
 using Amazon.Extensions.CognitoAuthentication;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace IncarnationEngine
 {
@@ -23,6 +26,7 @@ namespace IncarnationEngine
         public INESession SaveSession { get; private set; }
         public string DisplayName { get { return SessionActive ? User.Username : ""; } }
         public bool SessionActive { get { return User.SessionTokens != null; } }
+        private readonly HttpClient Client;
 
         public INEAuthorizor( RegionEndpoint endpoint, string poolID, string clientID, string username )
         {
@@ -34,6 +38,7 @@ namespace IncarnationEngine
             UserPool = new CognitoUserPool( PoolID, ClientID, Provider );
             User = new CognitoUser( Username, ClientID, UserPool, Provider );
             SaveSession = null;
+            Client = new HttpClient();
         }
 
         public async Task<bool> Login( string password )
@@ -94,19 +99,27 @@ namespace IncarnationEngine
             return false;
         }
 
-        public IEnumerator GetData( string RequestURL )
+        public async Task<HttpContent> GetData( string path )
         {
-            UnityWebRequest www = UnityWebRequest.Get( RequestURL );
-            www.SetRequestHeader( "Authorization", User.SessionTokens.IdToken );
-            yield return www.SendWebRequest();
+            HttpContent content = null;
+            Client.DefaultRequestHeaders.Accept.Clear();
+            Client.DefaultRequestHeaders.Accept.Add( new MediaTypeWithQualityHeaderValue( "application/json" ) );
+            Client.DefaultRequestHeaders.Add( "Authorization", User.SessionTokens.IdToken );
 
-            if( www.isNetworkError || www.isHttpError )
+            try
             {
-                Debug.Log( www.error );
-                Debug.Log( www.downloadHandler.text );
+                HttpResponseMessage response = await Client.GetAsync( path );
+                if( response.IsSuccessStatusCode )
+                {
+                    content = response.Content;
+                }
             }
-            else
-                INECore.act.CurrentData = www.downloadHandler.text;
+            catch( Exception e )
+            {
+                Debug.Log( e );
+            }
+
+            return content;
         }
     }
 }

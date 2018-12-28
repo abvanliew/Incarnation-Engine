@@ -10,12 +10,12 @@ namespace IncarnationEngine
 
         private void Update()
         {
-            Displayname.text = INECore.act.DisplayName;
+            Displayname.text = INE.DisplayName;
         }
 
         public void ClickSignOut()
         {
-            INECore.act.SignOut();
+            INE.SignOut();
         }
     }
 }

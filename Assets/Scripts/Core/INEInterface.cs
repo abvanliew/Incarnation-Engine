@@ -1,11 +1,13 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace IncarnationEngine
 {
-    public class INEInterface : MonoBehaviour
+    [Serializable] public class INEInterface
     {
-        public GameObject Header;
-        public GameObject LoginPanel;
-        public GameObject TestData;
+        [SerializeField] public GameObject Header;
+        [SerializeField] public GameObject LoginPanel;
+        [SerializeField] public GameObject TestData;
+        [SerializeField] public TeamListUI TeamList;
     }
 }
