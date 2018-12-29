@@ -64,6 +64,8 @@
     <Compile Include="Assets\Scripts\Core\INEAuthorizor.cs" />
     <Compile Include="Assets\Scripts\Core\INEInterface.cs" />
     <Compile Include="Assets\Scripts\Core\INELedger.cs" />
+    <Compile Include="Assets\Scripts\UI\Characters\AspectGroup.cs" />
+    <Compile Include="Assets\Scripts\UI\Characters\CharacterAspectUI.cs" />
     <Compile Include="Assets\Scripts\UI\HeaderUI.cs" />
     <Compile Include="Assets\Scripts\UI\LoginUI.cs" />
     <Compile Include="Assets\Scripts\UI\TeamListUI.cs" />
