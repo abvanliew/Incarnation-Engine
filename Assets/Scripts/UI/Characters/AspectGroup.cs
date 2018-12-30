@@ -66,7 +66,8 @@ namespace IncarnationEngine
                     float maxWeightFactor = Mathf.Log( 3.0f / 8.0f * Mathf.Pow( count, 2.0f ) );
                     float curWeightFactor = Mathf.Log( Mathf.Pow( count, 2.0f ) * sumSqrRatios / sumRatios );
 
-                    if( curWeightFactor <= maxWeightFactor )
+                    //if( curWeightFactor <= maxWeightFactor )
+                    if( true )
                     {
                         validDist = true;
                         bonusFactor = Mathf.Pow( maxWeightFactor / curWeightFactor, bonusExpPow );

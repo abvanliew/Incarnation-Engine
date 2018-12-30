@@ -1056,10 +1056,10 @@ RectTransform:
   m_Father: {fileID: 861743599}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 9, y: -135.2}
-  m_SizeDelta: {x: -11, y: 429.8}
+  m_AnchoredPosition: {x: 0, y: -135.20001}
+  m_SizeDelta: {x: -2, y: -135.20001}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &263115551
 MonoBehaviour:
@@ -1076,7 +1076,7 @@ MonoBehaviour:
   AspectPrefab: {fileID: 224755088348642658, guid: ccc140a7e998130448953df85699b921,
     type: 2}
   AspectParent: {fileID: 244633136}
-  ExpGained: 200
+  ExpGained: 405
 --- !u!1 &303779767
 GameObject:
   m_ObjectHideFlags: 0
@@ -2848,8 +2848,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 12, y: 12}
-  m_SizeDelta: {x: -24, y: -58}
+  m_AnchoredPosition: {x: 8, y: 8}
+  m_SizeDelta: {x: -16, y: -54}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &861743600
 MonoBehaviour:
@@ -4122,7 +4122,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.601
+  m_Value: 0.256
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -5825,7 +5825,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 0.131
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
