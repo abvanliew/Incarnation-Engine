@@ -60,6 +60,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Core\CharacterBuild\INEAspectGroup.cs" />
+    <Compile Include="Assets\Scripts\Core\CharacterBuild\INECharacterBuild.cs" />
     <Compile Include="Assets\Scripts\Core\INE.cs" />
     <Compile Include="Assets\Scripts\Core\INEAuthorizor.cs" />
     <Compile Include="Assets\Scripts\Core\INEInterface.cs" />

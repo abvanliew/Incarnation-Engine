@@ -193,7 +193,7 @@ namespace IncarnationEngine
         }
     }
 
-    [Serializable] public class INESession
+    [Serializable] public struct INESession
     {
         public RegionEndpoint Endpoint { get { return RegionEndpoint.GetBySystemName( EndpointName ); } }
         [SerializeField] private readonly string EndpointName;
@@ -212,7 +212,7 @@ namespace IncarnationEngine
         }
     }
 
-    public class INEResponse<T>
+    public struct INEResponse<T>
     {
         public int statusCode;
         public List<T> body;

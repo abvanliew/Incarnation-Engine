@@ -32,7 +32,7 @@ namespace IncarnationEngine
         }
     }
 
-    public class INETeam
+    public struct INETeam
     {
         public int TeamIndex;
         public string TeamName;
