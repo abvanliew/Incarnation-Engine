@@ -14,23 +14,29 @@ namespace IncarnationEngine
 
         public void GainExp( float expGained, float retrainingGained = 0 )
         {
-            float netExp = 0;
+            ExpRetraining net = NetGrowth( expGained, retrainingGained );
+
+            //code to call permanent rank increase formula
+        }
+
+        private ExpRetraining NetGrowth( float expGained, float retrainingGained = 0 )
+        {
+            ExpRetraining netGrowth;
             float excessExp = 0;
-            float netRetraining = 0;
 
             if( Exp + expGained >= MaxExp )
             {
-                netExp = MaxExp - Exp;
+                netGrowth.Exp = MaxExp - Exp;
                 excessExp = Exp + expGained - MaxExp;
             }
             else
             {
-                netExp = expGained;
+                netGrowth.Exp = expGained;
             }
 
-            netRetraining = INE.RetrainingRatio * ( expGained + excessExp * INE.ExcessExpConversion ) + retrainingGained;
+            netGrowth.Retraining = INE.RetrainingRatio * ( expGained + excessExp * INE.ExcessExpConversion ) + retrainingGained;
 
-            //code to call permanent rank increase formula
+            return netGrowth;
         }
 
         public Dictionary<int, int> GetAspectRanks( float exp = 0, float fixedExp = 0, float fixedTraining = 0 )
@@ -52,17 +58,26 @@ namespace IncarnationEngine
             return dist;
         }
 
-        public void SetDistribution( Dictionary<int, float> newDist )
+        public void SetDistribution( Dictionary<int, float> newDistribution )
         {
-            if( Aspects != null && newDist != null )
+            if( Aspects != null && newDistribution != null )
             {
-                foreach( KeyValuePair<int, float> entry in newDist )
+                foreach( KeyValuePair<int, float> entry in newDistribution )
                 {
                     if( Aspects.ContainsKey( entry.Key ) )
                     {
                         Aspects[entry.Key].Ideal.Distribution = entry.Value;
                     }
                 }
+            }
+        }
+
+        public void SetDistribution( int key, float value )
+        {
+            if( Aspects != null )
+            {
+                if( Aspects.ContainsKey( key ) )
+                    Aspects[key].Ideal.Distribution = value;
             }
         }
 
@@ -84,7 +99,7 @@ namespace IncarnationEngine
             
         }
 
-        private bool CalculateProjectedDistribution( float retraining )
+        private bool UpdateDistribution( float retraining, bool updateCurrent = false )
         {
             bool changed = false;
 
@@ -122,41 +137,48 @@ namespace IncarnationEngine
                         changed = true;
                     }
 
-                    aspect.Value.Projected.Distribution = newValue;
+                    if( updateCurrent )
+                        aspect.Value.Current.Distribution = newValue;
+                    else
+                        aspect.Value.Projected.Distribution = newValue;
                 }
             }
 
             return changed;
         }
-        
-        private void CalculateRanks( float exp, bool current = false, bool ideal = true, bool projected = true )
+
+        private void CalculateRanks( bool current = false, bool ideal = true, bool projected = true, float projectedExp )
         {
             if( Aspects != null )
             {
                 int count = 0;
                 float expMultiplierPower = 1.1f;
 
-                INEAspectCalculator currentAspect;
-                currentAspect.SumDistribution = 0;
-                currentAspect.SumWeightedRatios = 0;
-
-                INEAspectCalculator idealAspect;
-                idealAspect.SumDistribution = 0;
-                idealAspect.SumWeightedRatios = 0;
-
-                INEAspectCalculator projectedAspect;
-                projectedAspect.SumDistribution = 0;
-                projectedAspect.SumWeightedRatios = 0;
-
-
+                CalculationSet currentAspect;
+                //currentAspect.SumDistribution = 0;
+                //currentAspect.SumWeightedRatios = 0;
+                //currentAspect.ExpMultiplier = 0;
+                
+                CalculationSet idealAspect;
+                //idealAspect.SumDistribution = 0;
+                //idealAspect.SumWeightedRatios = 0;
+                //idealAspect.ExpMultiplier = 0;
+                
+                CalculationSet projectedAspect;
+                //projectedAspect.SumDistribution = 0;
+                //projectedAspect.SumWeightedRatios = 0;
+                //projectedAspect.ExpMultiplier = 0;
+                
                 foreach( KeyValuePair<int, INEAspect> aspect in Aspects )
                 {
                     if( aspect.Value != null )
                     {
                         if( current )
                             currentAspect.SumDistribution += aspect.Value.Current.Distribution;
+
                         if( ideal )
                             idealAspect.SumDistribution += aspect.Value.Ideal.Distribution;
+
                         if( projected )
                             projectedAspect.SumDistribution += aspect.Value.Projected.Distribution;
 
@@ -164,34 +186,97 @@ namespace IncarnationEngine
                     }
                 }
 
-                if( currentSumDistribution > 0 )
+                bool currentDistributed = current && currentAspect.SumDistribution > 0;
+                bool idealDistributed = ideal && idealAspect.SumDistribution > 0;
+                bool projectedDistributed = projected && projectedAspect.SumDistribution > 0;
+                
+                if( currentDistributed || idealDistributed || projectedDistributed )
                 {
-                    for( int i = 0; i < count; i++ )
+                    foreach( KeyValuePair<int, INEAspect> aspect in Aspects )
                     {
-                        ratios.Add( dist[i] / currentSumDistribution );
-                        sumWeightedRatios += Mathf.Pow( ratios[i], INE.AspectWeightPower );
+                        if( aspect.Value != null )
+                        {
+                            if( currentDistributed )
+                            {
+                                aspect.Value.Current.Ratio =
+                                    aspect.Value.Current.Distribution / currentAspect.SumDistribution;
+                                currentAspect.SumWeightedRatios +=
+                                    Mathf.Pow( aspect.Value.Current.Ratio, INE.AspectWeightPower );
+                            }
+
+                            if( idealDistributed )
+                            {
+                                aspect.Value.Ideal.Ratio =
+                                    aspect.Value.Ideal.Distribution / idealAspect.SumDistribution;
+                                idealAspect.SumWeightedRatios +=
+                                    Mathf.Pow( aspect.Value.Ideal.Ratio, INE.AspectWeightPower );
+                            }
+
+                            if( projectedDistributed )
+                            {
+                                aspect.Value.Projected.Ratio =
+                                    aspect.Value.Projected.Distribution / projectedAspect.SumDistribution;
+                                projectedAspect.SumWeightedRatios +=
+                                    Mathf.Pow( aspect.Value.Projected.Ratio, INE.AspectWeightPower );
+                            }
+                        }
                     }
 
-                    float evenWeightFactor = Mathf.Log( INE.EvenWeightedRatio * 
-                        Mathf.Pow( count, INE.AspectWeightPower ) );
-                    float weightFactor = Mathf.Log( sumWeightedRatios * Mathf.Pow( count, INE.AspectWeightPower ) );
-                    float expMultiplier = Mathf.Pow( evenWeightFactor / weightFactor, expMultiplierPower );
+                    float evenWeightFactor = Mathf.Log( INE.EvenWeightedRatio * Mathf.Pow( count, INE.AspectWeightPower ) );
 
-                    for( int i = 0; i < count; i++ )
+                    if( currentDistributed )
                     {
-                        int newValue = Mathf.FloorToInt( modifiers[i] * 
-                                ( expMultiplier * ratios[i] * exp + INE.BaseAspect ) );
+                        currentAspect.ExpMultiplier = Mathf.Pow( evenWeightFactor / 
+                            Mathf.Log( currentAspect.SumWeightedRatios * Mathf.Pow( count, INE.AspectWeightPower ) ), expMultiplierPower );
+                    }
+
+                    if( idealDistributed )
+                    {
+                        idealAspect.ExpMultiplier = Mathf.Pow( evenWeightFactor / 
+                            Mathf.Log( idealAspect.SumWeightedRatios * Mathf.Pow( count, INE.AspectWeightPower ) ), expMultiplierPower );
+                    }
+
+                    if( projectedDistributed )
+                    {
+                        projectedAspect.ExpMultiplier = Mathf.Pow( evenWeightFactor / 
+                            Mathf.Log( projectedAspect.SumWeightedRatios * Mathf.Pow( count, INE.AspectWeightPower ) ), expMultiplierPower );
+                    }
+                }
+
+                foreach( KeyValuePair<int, INEAspect> aspect in Aspects )
+                {
+                    if( current )
+                    {
+                        aspect.Value.Current.Rank = Mathf.FloorToInt( aspect.Value.Modifier * 
+                            ( currentAspect.ExpMultiplier * aspect.Value.Current.Ratio * Exp + INE.BaseAspect ) );
+                    }
+
+                    if( ideal )
+                    {
+                        aspect.Value.Ideal.Rank = Mathf.FloorToInt( aspect.Value.Modifier *
+                            ( idealAspect.ExpMultiplier * aspect.Value.Ideal.Ratio * MaxExp + INE.BaseAspect ) );
+                    }
+
+                    if( projected )
+                    {
+                        aspect.Value.Projected.Rank = Mathf.FloorToInt( aspect.Value.Modifier *
+                            ( projectedAspect.ExpMultiplier * aspect.Value.Projected.Ratio * projectedExp + INE.BaseAspect ) );
                     }
                 }
             }
         }
 
-        private struct INEAspectCalculator
+        private struct CalculationSet
         {
             public float SumDistribution;
             public float SumWeightedRatios;
-            public float WeightFactor;
             public float ExpMultiplier;
+        }
+
+        private struct ExpRetraining
+        {
+            public float Exp;
+            public float Retraining;
         }
     }
 
