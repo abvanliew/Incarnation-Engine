@@ -26,11 +26,17 @@ namespace IncarnationEngine
         static string DefaultClientID = "69qjjs5euih1kok6cdjvru1r6o";
         static string BaseURL = "https://6zq8xeebml.execute-api.us-east-1.amazonaws.com/dev/";
 
-        public static string DisplayName { get { return Auth != null ? Auth.DisplayName : ""; } }
+        public static string AccountDisplayName { get { return Auth != null ? Auth.DisplayName : ""; } }
+        public static readonly string[] AttributeNames;
         public static readonly string[] SkillNames;
         public static readonly string[] CurrencyFormats;
-        public static readonly float baseDamageEfficiency;
-        public static readonly double baseMitigation;
+        public static readonly float BaseDamageEfficiency;
+        public static readonly double BaseMitigation;
+        public static readonly float BaseAspect;
+        public static readonly float RetrainingRatio;
+        public static readonly float ExcessExpConversion;
+        public static readonly float AspectWeightPower;
+        public static readonly float EvenWeightedRatio;
 
         //validate there there is only 1 instance of this game object
         private void Awake()
@@ -65,8 +71,14 @@ namespace IncarnationEngine
             //    "Fire", "Frost", "Electricity", "Water", "Benevolent", "Malevolent", "Earth" };
             CurrencyFormats = new string[] { "{0} Platinum", "{0} Gold", "{0} Silver", "{0} Copper" };
 
-            baseDamageEfficiency = 100.0f;
-            baseMitigation = 0.9930924954370359d;
+            BaseDamageEfficiency = 100.0f;
+            BaseMitigation = 0.9930924954370359d;
+
+            BaseAspect = 20;
+            RetrainingRatio = 0.0025f;
+            ExcessExpConversion = 0.15f;
+            AspectWeightPower = 2;
+            EvenWeightedRatio = 3f * Mathf.Pow( 1f / 3f, AspectWeightPower );
         }
 
         public static async Task<bool> Login( string username, string password, 
@@ -172,12 +184,12 @@ namespace IncarnationEngine
             if( dmgEfficiency < 0 )
                 dmgEfficiency = 0;
 
-            return dmgEfficiency / ( dmgEfficiency + baseDamageEfficiency );
+            return dmgEfficiency / ( dmgEfficiency + BaseDamageEfficiency );
         }
 
         public static float MitigationValue( float mitigationAmount )
         {
-            return (float)Math.Pow( baseMitigation, (double)mitigationAmount );
+            return (float)Math.Pow( BaseMitigation, (double)mitigationAmount );
         }
 
         public static float MitigationValue( float[] mitigationAmount )
@@ -189,11 +201,11 @@ namespace IncarnationEngine
             {
                 mitigationTotal += mitigationFactor;
             }
-            return (float)Math.Pow( baseMitigation, mitigationTotal );
+            return (float)Math.Pow( BaseMitigation, mitigationTotal );
         }
     }
 
-    [Serializable] public struct INESession
+    [Serializable] public class INESession
     {
         public RegionEndpoint Endpoint { get { return RegionEndpoint.GetBySystemName( EndpointName ); } }
         [SerializeField] private readonly string EndpointName;

@@ -10,7 +10,7 @@ namespace IncarnationEngine
 
         private void Update()
         {
-            Displayname.text = INE.DisplayName;
+            Displayname.text = INE.AccountDisplayName;
         }
 
         public void ClickSignOut()
