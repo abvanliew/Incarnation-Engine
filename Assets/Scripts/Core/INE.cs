@@ -37,6 +37,7 @@ namespace IncarnationEngine
         public static readonly float ExcessExpConversion;
         public static readonly float AspectWeightPower;
         public static readonly float EvenWeightedRatio;
+        public static readonly float MaxDistribution;
 
         //validate there there is only 1 instance of this game object
         private void Awake()
@@ -79,6 +80,7 @@ namespace IncarnationEngine
             ExcessExpConversion = 0.15f;
             AspectWeightPower = 2;
             EvenWeightedRatio = 3f * Mathf.Pow( 1f / 3f, AspectWeightPower );
+            MaxDistribution = 120;
         }
 
         public static async Task<bool> Login( string username, string password, 

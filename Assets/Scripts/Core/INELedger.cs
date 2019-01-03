@@ -6,13 +6,8 @@ namespace IncarnationEngine
     public class INELedger
     {
         public List<INETeam> Teams;
-        //create dummy character developement class
-        //holds list of attribute distributions
-        //list of skill distributions
-        //attribute exp gained
-        //skill exp gained
-
-
+        public INECharacterBuild CharacterBuild;
+        
         public void StartNewTeam()
         {
 
