@@ -9,5 +9,6 @@ namespace IncarnationEngine
         [SerializeField] public GameObject LoginPanel;
         [SerializeField] public GameObject TestData;
         [SerializeField] public TeamListUI TeamList;
+        [SerializeField] public CharacterBuildUI CharacterBuildPanel;
     }
 }

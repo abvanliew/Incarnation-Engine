@@ -9,6 +9,27 @@ namespace IncarnationEngine
         public float Exp { get; private set; }
         public float MaxExp { get; private set; }
         public Dictionary<int, INEAspect> Aspects { get; private set; }
+        public float CurrentExpMultiplier { get; private set; }
+        public float IdealExpMultiplier { get; private set; }
+        public float ProjectedExpMultiplier { get; private set; }
+
+        public INEAspectGroup( float maxExp, int aspectCount, Dictionary<int, float> aspectModifers )
+        {
+            Exp = 0;
+            MaxExp = maxExp <= 1 ? 1 : maxExp;
+            if( aspectCount > 0 )
+            {
+                Aspects = new Dictionary<int, INEAspect>();
+                for( int i = 0; i < aspectCount; i++ )
+                {
+                    float modifer = 1f;
+                    if( aspectModifers != null && aspectModifers.ContainsKey( i ) )
+                        modifer = aspectModifers[i];
+
+                    Aspects.Add( i, new INEAspect( modifer, 0, 0 ) );
+                }
+            }
+        }
 
         public void SetDistribution( int key, float value )
         {
@@ -96,6 +117,9 @@ namespace IncarnationEngine
                 if( retraining < 0 )
                     retraining = 0;
 
+                if( Exp > INE.RetrainingExpThreshold )
+                    retraining = INE.RetrainingExpThreshold / Exp * retraining;
+
                 Dictionary<int, float> differences = new Dictionary<int, float>();
                 float differenceMagnitude = 0;
                 
@@ -147,7 +171,6 @@ namespace IncarnationEngine
             if( Aspects != null )
             {
                 int count = 0;
-                float expMultiplierPower = 1.1f;
 
                 CalculationSet currentAspect;
                 currentAspect.SumDistribution = 0;
@@ -217,6 +240,7 @@ namespace IncarnationEngine
                         }
                     }
 
+                    float expMultiplierPower = INE.ExpMultiplierPower( count );
                     float evenWeightFactor = Mathf.Log( INE.EvenWeightedRatio * Mathf.Pow( count, INE.AspectWeightPower ) );
 
                     if( currentDistributed )
@@ -237,6 +261,15 @@ namespace IncarnationEngine
                             Mathf.Log( projectedAspect.SumWeightedRatios * Mathf.Pow( count, INE.AspectWeightPower ) ), expMultiplierPower );
                     }
                 }
+
+                if( current )
+                    CurrentExpMultiplier = currentAspect.ExpMultiplier;
+
+                if( ideal )
+                    IdealExpMultiplier = idealAspect.ExpMultiplier;
+
+                if( projected )
+                    ProjectedExpMultiplier = projectedAspect.ExpMultiplier;
 
                 foreach( KeyValuePair<int, INEAspect> aspect in Aspects )
                 {
@@ -281,6 +314,15 @@ namespace IncarnationEngine
         public INEAspectElement Current;
         public INEAspectElement Ideal;
         public INEAspectElement Projected;
+
+        public INEAspect() { }
+
+        public INEAspect( float modifer, float currentDistribution, float idealDistribution )
+        {
+            Modifier = modifer <= 0 ? 1 : modifer;
+            Current.Distribution = currentDistribution;
+            Ideal.Distribution = idealDistribution;
+        }
     }
     
     public struct INEAspectElement

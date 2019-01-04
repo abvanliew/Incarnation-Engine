@@ -38,6 +38,9 @@ namespace IncarnationEngine
         public static readonly float AspectWeightPower;
         public static readonly float EvenWeightedRatio;
         public static readonly float MaxDistribution;
+        public static readonly float RetrainingExpThreshold;
+
+        public float expPowerAtNine = 1.1f;
 
         //validate there there is only 1 instance of this game object
         private void Awake()
@@ -55,7 +58,7 @@ namespace IncarnationEngine
             else if( Core != this )
                 Destroy( gameObject );
         }
-
+                
         private void Start()
         {
             SessionPath = Application.persistentDataPath + "/session.dat";
@@ -64,12 +67,15 @@ namespace IncarnationEngine
             DefaultClientID = "69qjjs5euih1kok6cdjvru1r6o";
             BaseURL = "https://6zq8xeebml.execute-api.us-east-1.amazonaws.com/dev/";
             LoadSession();
+            Ledger.NewCharacterBuild();
         }
 
         static INE()
         {
-            //SkillNames = new string[] { "Striking", "Shooting", "Defense", "Disruption", "Combat Mobility", "Stealth", "Spell Mastery",
-            //    "Fire", "Frost", "Electricity", "Water", "Benevolent", "Malevolent", "Earth" };
+            AttributeNames = new string[] { "Strength", "Finesse", "Perception", "Speed", "Endurance", "Resistance",
+                "Potency", "Essence", "Affinity" };
+            SkillNames = new string[] { "Striking", "Shooting", "Defense", "Disruption", "Combat Mobility", "Stealth", "Spell Mastery",
+                "Fire", "Frost", "Electricity", "Water", "Benevolent", "Malevolent", "Earth" };
             CurrencyFormats = new string[] { "{0} Platinum", "{0} Gold", "{0} Silver", "{0} Copper" };
 
             BaseDamageEfficiency = 100.0f;
@@ -81,6 +87,7 @@ namespace IncarnationEngine
             AspectWeightPower = 2;
             EvenWeightedRatio = 3f * Mathf.Pow( 1f / 3f, AspectWeightPower );
             MaxDistribution = 120;
+            RetrainingExpThreshold = 100;
         }
 
         public static async Task<bool> Login( string username, string password, 
@@ -160,6 +167,11 @@ namespace IncarnationEngine
                 bf.Serialize( file, Auth.SaveSession );
                 file.Close();
             }
+        }
+
+        public static float ExpMultiplierPower( int aspectCount )
+        {
+            return aspectCount == 9 ? Core.expPowerAtNine : 0f;
         }
 
         public static string FormatCurrency( float value )
