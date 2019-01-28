@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using Amazon;
-using Amazon.Extensions.CognitoAuthentication;
 using System.Net.Http;
-using System.Net.Http.Headers;
+using Newtonsoft.Json;
 
 namespace IncarnationEngine
 {
@@ -39,6 +38,8 @@ namespace IncarnationEngine
         public static readonly float EvenWeightedRatio;
         public static readonly float MaxDistribution;
         public static readonly float RetrainingExpThreshold;
+        public static readonly string ValidNamePattern;
+        public static readonly string ValidCharPattern;
 
         public float expPowerAtNine = 1.1f;
 
@@ -88,6 +89,9 @@ namespace IncarnationEngine
             EvenWeightedRatio = 3f * Mathf.Pow( 1f / 3f, AspectWeightPower );
             MaxDistribution = 120;
             RetrainingExpThreshold = 100;
+
+            ValidNamePattern = "^[A-Za-z]([-A-Za-z0-9' ]{1,30})[A-Za-z0-9]$";
+            ValidCharPattern = "[-A-Za-z0-9' ]";
         }
 
         public static async Task<bool> Login( string username, string password, 
@@ -130,8 +134,34 @@ namespace IncarnationEngine
         {
             HttpContent res = await Auth.GetData( BaseURL + callPath );
             INEResponse<T> parse = await res.ReadAsAsync<INEResponse<T>>();
-            
+
             return parse.body;
+        }
+
+        public static async Task<string> GetDataAsJson( string callPath )
+        {
+            HttpContent res = await Auth.GetData( BaseURL + callPath );
+            string parse = await res.ReadAsStringAsync();
+
+            return parse;
+        }
+
+        public static async Task<List<T>> PostData<T>( string callPath, object data )
+        {
+            string json = JsonConvert.SerializeObject( data, Formatting.Indented );
+
+            HttpContent res = await Auth.PostData( BaseURL + callPath, json );
+            INEResponse<T> parse = await res.ReadAsAsync<INEResponse<T>>();
+
+            return parse.body;
+        }
+
+        public static async Task<string> PostDataAsJson( string callPath, string data )
+        {
+            HttpContent res = await Auth.PostData( BaseURL + callPath, data );
+            string parse = await res.ReadAsStringAsync();
+
+            return parse;
         }
 
         private static async void LoadSession()

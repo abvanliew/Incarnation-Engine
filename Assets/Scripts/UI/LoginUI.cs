@@ -70,8 +70,13 @@ namespace IncarnationEngine
             }
             else
             {
-                INE.Login( UsernameInput.text, PasswordInput.text );
+                INELogin();
             }
+        }
+
+        private async void INELogin()
+        {
+            await INE.Login( UsernameInput.text, PasswordInput.text );
         }
     }
 }

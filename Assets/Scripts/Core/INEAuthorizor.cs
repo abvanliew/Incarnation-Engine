@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Networking;
 using Amazon;
 using Amazon.Runtime;
 using Amazon.CognitoIdentityProvider;
@@ -11,6 +8,7 @@ using Amazon.CognitoIdentityProvider.Model;
 using Amazon.Extensions.CognitoAuthentication;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 
 namespace IncarnationEngine
 {
@@ -26,6 +24,7 @@ namespace IncarnationEngine
         public INESession SaveSession { get; private set; }
         public string DisplayName { get { return SessionActive ? User.Username : ""; } }
         public bool SessionActive { get { return User.SessionTokens != null; } }
+        public string IDToken { get { return User.SessionTokens.IdToken; } }
         private readonly HttpClient Client;
 
         public INEAuthorizor( RegionEndpoint endpoint, string poolID, string clientID, string username )
@@ -56,11 +55,14 @@ namespace IncarnationEngine
                 try
                 {
                     AuthFlowResponse AuthResponse = await User.StartWithSrpAuthAsync
-                            ( new InitiateSrpAuthRequest() { Password = password } ).ConfigureAwait( false );   
-                    
+                            ( new InitiateSrpAuthRequest() { Password = password } ).ConfigureAwait( false );
+
                     if( AuthResponse != null )
                     {
                         Debug.Log( "User successfully authenticated" );
+                        Client.DefaultRequestHeaders.Accept.Clear();
+                        Client.DefaultRequestHeaders.Accept.Add( new MediaTypeWithQualityHeaderValue( "application/json" ) );
+                        Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( User.SessionTokens.IdToken );
                         return true;
                     }
                 }
@@ -101,25 +103,50 @@ namespace IncarnationEngine
 
         public async Task<HttpContent> GetData( string path )
         {
-            HttpContent content = null;
-            Client.DefaultRequestHeaders.Accept.Clear();
-            Client.DefaultRequestHeaders.Accept.Add( new MediaTypeWithQualityHeaderValue( "application/json" ) );
-            Client.DefaultRequestHeaders.Add( "Authorization", User.SessionTokens.IdToken );
+            HttpContent returnContent = null;
 
-            try
+            if( SessionActive )
             {
-                HttpResponseMessage response = await Client.GetAsync( path );
-                if( response.IsSuccessStatusCode )
+                try
                 {
-                    content = response.Content;
+                    HttpResponseMessage response = await Client.GetAsync( path );
+
+                    if( response.IsSuccessStatusCode )
+                    {
+                        returnContent = response.Content;
+                    }
+                }
+                catch( Exception e )
+                {
+                    Debug.Log( e );
                 }
             }
-            catch( Exception e )
+            
+            return returnContent;
+        }
+
+        public async Task<HttpContent> PostData( string path, string bodyJson )
+        {
+            HttpContent returnContent = null;
+
+            if( SessionActive )
             {
-                Debug.Log( e );
+                try
+                {
+                    HttpResponseMessage response = await Client.PostAsync( path, new StringContent( bodyJson, Encoding.UTF8, "application/json" ) );
+
+                    if( response.IsSuccessStatusCode )
+                    {
+                        returnContent = response.Content;
+                    }
+                }
+                catch( Exception e )
+                {
+                    Debug.Log( e );
+                }
             }
 
-            return content;
+            return returnContent;
         }
     }
 }

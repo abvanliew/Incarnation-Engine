@@ -60,20 +60,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\CharacterBuild\AspectGroupUI.cs" />
+    <Compile Include="Assets\Scripts\CharacterBuild\AspectUI.cs" />
+    <Compile Include="Assets\Scripts\CharacterBuild\CharacterBuildUI.cs" />
     <Compile Include="Assets\Scripts\CharacterBuild\INEAspectGroup.cs" />
     <Compile Include="Assets\Scripts\CharacterBuild\INECharacterBuild.cs" />
+    <Compile Include="Assets\Scripts\CharacterBuild\PerksUI.cs" />
     <Compile Include="Assets\Scripts\Core\INE.cs" />
     <Compile Include="Assets\Scripts\Core\INEAuthorizor.cs" />
     <Compile Include="Assets\Scripts\Core\INEInterface.cs" />
     <Compile Include="Assets\Scripts\Core\INELedger.cs" />
-    <Compile Include="Assets\Scripts\UI\CharacterBuild\AspectGroupUI.cs" />
-    <Compile Include="Assets\Scripts\UI\CharacterBuild\AspectUI.cs" />
-    <Compile Include="Assets\Scripts\UI\CharacterBuild\CharacterBuildUI.cs" />
-    <Compile Include="Assets\Scripts\UI\Framework\HeaderUI.cs" />
-    <Compile Include="Assets\Scripts\UI\Framework\LoginUI.cs" />
-    <Compile Include="Assets\Scripts\UI\Framework\TeamListUI.cs" />
-    <Compile Include="Assets\Scripts\UI\Framework\TeamSelectorUI.cs" />
-    <Compile Include="Assets\Scripts\UI\Framework\TestData.cs" />
+    <Compile Include="Assets\Scripts\UI\APITestUI.cs" />
+    <Compile Include="Assets\Scripts\UI\HeaderUI.cs" />
+    <Compile Include="Assets\Scripts\UI\LoginUI.cs" />
+    <Compile Include="Assets\Scripts\UI\TeamListUI.cs" />
+    <Compile Include="Assets\Scripts\UI\TeamSelectorUI.cs" />
     <Compile Include="Assets\Scripts\Utilities\ComplexPolyFunct.cs" />
     <Compile Include="Assets\Scripts\Utilities\PolynomialFunct.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">

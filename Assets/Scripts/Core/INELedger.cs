@@ -38,7 +38,7 @@ namespace IncarnationEngine
                 { 6, 1.5f }
             };
             CharacterBuild = new INECharacterBuild( 1000, true, newMods );
-            INE.Core.UI.CharacterBuildPanel.Attributes.SetAspects( CharacterBuild.Attributes );
+            INE.Core.UI.CharacterBuildPanel.AttributesGroup.SetAspects( CharacterBuild.Attributes );
         }
     }
 
