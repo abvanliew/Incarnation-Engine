@@ -70,10 +70,12 @@
     <Compile Include="Assets\Scripts\Core\INEAuthorizor.cs" />
     <Compile Include="Assets\Scripts\Core\INEInterface.cs" />
     <Compile Include="Assets\Scripts\Core\INELedger.cs" />
+    <Compile Include="Assets\Scripts\Team\CharacterListUI.cs" />
+    <Compile Include="Assets\Scripts\Team\FormationUI.cs" />
+    <Compile Include="Assets\Scripts\Team\TeamListUI.cs" />
     <Compile Include="Assets\Scripts\UI\APITestUI.cs" />
     <Compile Include="Assets\Scripts\UI\HeaderUI.cs" />
     <Compile Include="Assets\Scripts\UI\LoginUI.cs" />
-    <Compile Include="Assets\Scripts\UI\TeamListUI.cs" />
     <Compile Include="Assets\Scripts\UI\TeamSelectorUI.cs" />
     <Compile Include="Assets\Scripts\Utilities\ComplexPolyFunct.cs" />
     <Compile Include="Assets\Scripts\Utilities\PolynomialFunct.cs" />
