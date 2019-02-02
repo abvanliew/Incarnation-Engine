@@ -18,16 +18,16 @@ namespace IncarnationEngine
 
         public void PopulateTeams()
         {
-            if( INE.Ledger.Teams != null && INE.Ledger.Teams.Count > 0 )
+            if( INE.Ledger.TeamList != null && INE.Ledger.TeamList.Count > 0 )
             {
                 Teams = new List<TeamSelectorUI>();
 
-                for( int i = 0; i < INE.Ledger.Teams.Count; i++ )
+                for( int i = 0; i < INE.Ledger.TeamList.Count; i++ )
                 {
                     RectTransform newPrefab = Instantiate( TeamSelectorPrefab );
                     Teams.Add( newPrefab.GetComponent<TeamSelectorUI>() );
                     newPrefab.transform.SetParent( ListParent.transform, false );
-                    Teams[i].SetTeam( INE.Ledger.Teams[i] );
+                    Teams[i].SetTeam( INE.Ledger.TeamList[i] );
                 }
             }
         }

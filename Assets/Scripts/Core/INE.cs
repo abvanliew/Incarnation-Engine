@@ -117,7 +117,7 @@ namespace IncarnationEngine
                 SaveSession();
             }
 
-            INE.Ledger.Teams = await GetData<INETeam>( "team/list/" );
+            INE.Ledger.TeamList = await GetData<INETeamEntry>( "team/list/" );
 
             Ledger.RefreshTeamList();
 

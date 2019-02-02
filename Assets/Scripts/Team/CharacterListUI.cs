@@ -1,18 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class CharacterListUI : MonoBehaviour
+namespace IncarnationEngine
 {
-    // Start is called before the first frame update
-    void Start()
+    public class CharacterListUI : MonoBehaviour
     {
-        
-    }
+        public Button InitialCharacterButton;
+        public Button BackButton;
+        public RectTransform CharacterListParent;
+        public RectTransform CharacterSelectorPrefab;
+        private List<CharacterSelectorUI> Characters;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        public void ClickBack()
+        {
+
+        }
+
+        public void ClickInitialCharacter()
+        {
+
+        }
     }
 }

@@ -5,7 +5,8 @@ namespace IncarnationEngine
 {
     public class INELedger
     {
-        public List<INETeam> Teams;
+        public List<INETeamEntry> TeamList;
+        public INETeam CurrentTeam;
         public INECharacterBuild CharacterBuild;
         
         public void StartNewTeam()
@@ -20,7 +21,7 @@ namespace IncarnationEngine
 
         public void RefreshTeamList()
         {
-            if( Teams != null )
+            if( TeamList != null )
             {
                 INE.Core.UI.TeamList.PopulateTeams();
             }
@@ -42,7 +43,7 @@ namespace IncarnationEngine
         }
     }
 
-    public class INETeam
+    public class INETeamEntry
     {
         public int TeamIndex;
         public string TeamName;
