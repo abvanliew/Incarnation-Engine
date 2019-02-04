@@ -30,8 +30,8 @@ namespace IncarnationEngine
         public Button DoneButton;
 
         private bool NewCharacter;
-        private INECharacterBuild CharacterRef;
-        private INECharacterBuild CurrentCharacter;
+        private INECharacter CharacterRef;
+        private INECharacter CurrentCharacter;
 
         public void ClickDescription()
         {
@@ -71,7 +71,7 @@ namespace IncarnationEngine
 
         private char ValidateChar( char validateChar )
         {
-            if( !Regex.IsMatch( validateChar.ToString(), INE.ValidCharPattern ) )
+            if( !Regex.IsMatch( validateChar.ToString(), INE.Format.ValidCharPattern ) )
             {
                 validateChar = '\0';
             }

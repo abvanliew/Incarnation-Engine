@@ -37,7 +37,7 @@ namespace IncarnationEngine
                         RectTransform newPrefab = Instantiate( AspectPrefab );
                         AspectsUI.Add( aspect.Key, newPrefab.GetComponent<AspectUI>() );
                         newPrefab.transform.SetParent( AspectParent.transform, false );
-                        AspectsUI[aspect.Key].SetAspect( aspect.Key, INE.AttributeNames[aspect.Key], 
+                        AspectsUI[aspect.Key].SetAspect( aspect.Key, INE.Format.AttributeNames[aspect.Key], 
                             aspect.Value.Current.Rank, aspect.Value.Current.Distribution,
                             aspect.Value.Projected.Rank, aspect.Value.Projected.Distribution,
                             aspect.Value.Ideal.Rank, aspect.Value.Ideal.Distribution );

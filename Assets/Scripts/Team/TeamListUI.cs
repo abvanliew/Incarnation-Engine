@@ -16,7 +16,24 @@ namespace IncarnationEngine
             INE.Ledger.StartNewTeam();
         }
 
-        public void PopulateTeams()
+        public void Activate( bool state = true )
+        {
+            NewTeam.interactable = state;
+            if( Teams != null && Teams.Count > 0 )
+            {
+                for( int i = 0; i < Teams.Count; i++ )
+                {
+                    Teams[i].Activate( state );
+                }
+            }
+        }
+
+        private void OnEnable()
+        {
+            PopulateTeams();
+        }
+
+        private void PopulateTeams()
         {
             if( INE.Ledger.TeamList != null && INE.Ledger.TeamList.Count > 0 )
             {

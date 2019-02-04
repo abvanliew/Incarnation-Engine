@@ -36,7 +36,7 @@ namespace IncarnationEngine
             if( Aspects != null )
             {
                 if( Aspects.ContainsKey( key ) )
-                    Aspects[key].Ideal.Distribution = value < 0 ? 0 : value > INE.MaxDistribution ? INE.MaxDistribution : value;
+                    Aspects[key].Ideal.Distribution = value < 0 ? 0 : value > INE.Character.MaxDistribution ? INE.Character.MaxDistribution : value;
             }
         }
 
@@ -49,7 +49,7 @@ namespace IncarnationEngine
                     if( Aspects.ContainsKey( aspect.Key ) )
                     {
                         Aspects[aspect.Key].Ideal.Distribution = 
-                            aspect.Value < 0 ? 0 : aspect.Value > INE.MaxDistribution ? INE.MaxDistribution : aspect.Value;
+                            aspect.Value < 0 ? 0 : aspect.Value > INE.Character.MaxDistribution ? INE.Character.MaxDistribution : aspect.Value;
                     }
                 }
             }
@@ -80,7 +80,7 @@ namespace IncarnationEngine
                 netGrowth.Exp = expGained;
             }
 
-            netGrowth.Retraining = INE.RetrainingRatio * ( expGained + excessExp * INE.ExcessExpConversion ) + retrainingGained;
+            netGrowth.Retraining = INE.Character.RetrainingRatio * ( expGained + excessExp * INE.Character.ExcessExpConversion ) + retrainingGained;
 
             return netGrowth;
         }
@@ -117,8 +117,8 @@ namespace IncarnationEngine
                 if( retraining < 0 )
                     retraining = 0;
 
-                if( Exp > INE.RetrainingExpThreshold )
-                    retraining = INE.RetrainingExpThreshold / Exp * retraining;
+                if( Exp > INE.Character.RetrainingExpThreshold )
+                    retraining = INE.Character.RetrainingExpThreshold / Exp * retraining;
 
                 Dictionary<int, float> differences = new Dictionary<int, float>();
                 float differenceMagnitude = 0;
@@ -219,7 +219,7 @@ namespace IncarnationEngine
                                 aspect.Value.Current.Ratio =
                                     aspect.Value.Current.Distribution / currentAspect.SumDistribution;
                                 currentAspect.SumWeightedRatios +=
-                                    Mathf.Pow( aspect.Value.Current.Ratio, INE.AspectWeightPower );
+                                    Mathf.Pow( aspect.Value.Current.Ratio, INE.Character.AspectWeightPower );
                             }
 
                             if( idealDistributed )
@@ -227,7 +227,7 @@ namespace IncarnationEngine
                                 aspect.Value.Ideal.Ratio =
                                     aspect.Value.Ideal.Distribution / idealAspect.SumDistribution;
                                 idealAspect.SumWeightedRatios +=
-                                    Mathf.Pow( aspect.Value.Ideal.Ratio, INE.AspectWeightPower );
+                                    Mathf.Pow( aspect.Value.Ideal.Ratio, INE.Character.AspectWeightPower );
                             }
 
                             if( projectedDistributed )
@@ -235,30 +235,30 @@ namespace IncarnationEngine
                                 aspect.Value.Projected.Ratio =
                                     aspect.Value.Projected.Distribution / projectedAspect.SumDistribution;
                                 projectedAspect.SumWeightedRatios +=
-                                    Mathf.Pow( aspect.Value.Projected.Ratio, INE.AspectWeightPower );
+                                    Mathf.Pow( aspect.Value.Projected.Ratio, INE.Character.AspectWeightPower );
                             }
                         }
                     }
 
                     float expMultiplierPower = INE.ExpMultiplierPower( count );
-                    float evenWeightFactor = Mathf.Log( INE.EvenWeightedRatio * Mathf.Pow( count, INE.AspectWeightPower ) );
+                    float evenWeightFactor = Mathf.Log( INE.Character.EvenWeightedRatio * Mathf.Pow( count, INE.Character.AspectWeightPower ) );
 
                     if( currentDistributed )
                     {
                         currentAspect.ExpMultiplier = Mathf.Pow( evenWeightFactor / 
-                            Mathf.Log( currentAspect.SumWeightedRatios * Mathf.Pow( count, INE.AspectWeightPower ) ), expMultiplierPower );
+                            Mathf.Log( currentAspect.SumWeightedRatios * Mathf.Pow( count, INE.Character.AspectWeightPower ) ), expMultiplierPower );
                     }
 
                     if( idealDistributed )
                     {
                         idealAspect.ExpMultiplier = Mathf.Pow( evenWeightFactor / 
-                            Mathf.Log( idealAspect.SumWeightedRatios * Mathf.Pow( count, INE.AspectWeightPower ) ), expMultiplierPower );
+                            Mathf.Log( idealAspect.SumWeightedRatios * Mathf.Pow( count, INE.Character.AspectWeightPower ) ), expMultiplierPower );
                     }
 
                     if( projectedDistributed )
                     {
                         projectedAspect.ExpMultiplier = Mathf.Pow( evenWeightFactor / 
-                            Mathf.Log( projectedAspect.SumWeightedRatios * Mathf.Pow( count, INE.AspectWeightPower ) ), expMultiplierPower );
+                            Mathf.Log( projectedAspect.SumWeightedRatios * Mathf.Pow( count, INE.Character.AspectWeightPower ) ), expMultiplierPower );
                     }
                 }
 
@@ -276,19 +276,19 @@ namespace IncarnationEngine
                     if( current )
                     {
                         aspect.Value.Current.Rank = Mathf.FloorToInt( aspect.Value.Modifier * 
-                            ( currentAspect.ExpMultiplier * aspect.Value.Current.Ratio * Exp + INE.BaseAspect ) );
+                            ( currentAspect.ExpMultiplier * aspect.Value.Current.Ratio * Exp + INE.Character.BaseAspect ) );
                     }
 
                     if( ideal )
                     {
                         aspect.Value.Ideal.Rank = Mathf.FloorToInt( aspect.Value.Modifier *
-                            ( idealAspect.ExpMultiplier * aspect.Value.Ideal.Ratio * MaxExp + INE.BaseAspect ) );
+                            ( idealAspect.ExpMultiplier * aspect.Value.Ideal.Ratio * MaxExp + INE.Character.BaseAspect ) );
                     }
 
                     if( projected )
                     {
                         aspect.Value.Projected.Rank = Mathf.FloorToInt( aspect.Value.Modifier *
-                            ( projectedAspect.ExpMultiplier * aspect.Value.Projected.Ratio * projectedExp + INE.BaseAspect ) );
+                            ( projectedAspect.ExpMultiplier * aspect.Value.Projected.Ratio * projectedExp + INE.Character.BaseAspect ) );
                     }
                 }
             }

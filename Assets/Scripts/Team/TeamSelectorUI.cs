@@ -11,20 +11,27 @@ namespace IncarnationEngine
         public Text CharacterCountDisplay;
         public Slider LeadershipDisplay;
 
-        private INETeamEntry Team;
+        private INETeamSummary Team;
 
         public void SelectTeam()
         {
             if( Team != null )
             {
                 Debug.Log( string.Format( "{0} Selected", Team.TeamName ) );
+                INE.Ledger.LoadTeam( Team.TeamIndex );
             }
         }
 
-        public void SetTeam( INETeamEntry team )
+        public void SetTeam( INETeamSummary team )
         {
             Team = team;
             RefreshUI();
+        }
+
+        public void Activate( bool state = true )
+        {
+            SelectTeamButton.interactable = state;
+            LeadershipDisplay.interactable = state;
         }
 
         private void RefreshUI()
@@ -32,7 +39,7 @@ namespace IncarnationEngine
             if( Team != null )
             {
                 TeamNameDisplay.text = Team.TeamName;
-                WealthDisplay.text = INE.FormatCurrency( Team.Wealth );
+                WealthDisplay.text = INE.Format.Currency( Team.Wealth );
                 CharacterCountDisplay.text = Team.CharacterCount.ToString();
                 LeadershipDisplay.value = Team.Leadership < 0 ? 0 : Team.Leadership > 1 ? 1 : Team.Leadership;
             }

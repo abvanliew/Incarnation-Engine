@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace IncarnationEngine
 {
-    public class INECharacter
+    public class FormationUI : MonoBehaviour
     {
-        INECharacterBuild Build;
+
     }
 }
+

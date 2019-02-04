@@ -6,10 +6,16 @@ namespace IncarnationEngine
 {
     public class INELayout
     {
-        List<INESpell> Spells;
-        List<INEWornArmor> Armor;
+        List<INEWornArmor> WornArmor;
         List<INEWeaponSet> WeaponSets;
         List<INEConsumable> Potions;
+        List<INESpell> Spells;
+    }
+
+
+    public class INEWornArmor
+    {
+
     }
 
     public class INEAction
@@ -22,15 +28,9 @@ namespace IncarnationEngine
 
     }
 
-    public class INEWornArmor
-    {
-
-    }
-
     public class INEWeaponSet
     {
         List<INEAction> Actions;
-
-
+        List<INEWeildable> Weildables;
     }
 }

@@ -14,9 +14,15 @@ namespace IncarnationEngine
     {
         public static INE Core { get; private set; }
         public static INELedger Ledger { get; private set; }
-        [SerializeField] public INEInterface UI = new INEInterface();
-        private static INEAuthorizor Auth;
+        public static INEGameData Data { get; private set; }
+        public static INEInterface UI { get; private set; }
+        [SerializeField] public INEInterfaceList UIList = new INEInterfaceList();
 
+        public static INEFormating Format { get; private set; } = new INEFormating();
+        public static INECharacterConstants Character { get; private set; } = new INECharacterConstants();
+        public static INECombatConstants Combat { get; private set; } = new INECombatConstants();
+
+        private static INEAuthorizor Auth;
         private static string SessionPath;
 
         //This block of code needs to be replaced, probably by a scriptable object with the data loaded into it
@@ -26,21 +32,8 @@ namespace IncarnationEngine
         static string BaseURL = "https://6zq8xeebml.execute-api.us-east-1.amazonaws.com/dev/";
 
         public static string AccountDisplayName { get { return Auth != null ? Auth.DisplayName : ""; } }
-        public static readonly string[] AttributeNames;
-        public static readonly string[] SkillNames;
-        public static readonly string[] CurrencyFormats;
-        public static readonly float BaseDamageEfficiency;
-        public static readonly double BaseMitigation;
-        public static readonly float BaseAspect;
-        public static readonly float RetrainingRatio;
-        public static readonly float ExcessExpConversion;
-        public static readonly float AspectWeightPower;
-        public static readonly float EvenWeightedRatio;
-        public static readonly float MaxDistribution;
-        public static readonly float RetrainingExpThreshold;
-        public static readonly string ValidNamePattern;
-        public static readonly string ValidCharPattern;
 
+        //when I remove this remember to remove the function at the bottom of the class that uses this value
         public float expPowerAtNine = 1.1f;
 
         //validate there there is only 1 instance of this game object
@@ -54,12 +47,14 @@ namespace IncarnationEngine
                 //ensures that the static reference is correct
                 Core = this;
                 Ledger = new INELedger();
+                Data = new INEGameData();
+                UI = new INEInterface( UIList );
             }
             //removes duplicates
             else if( Core != this )
                 Destroy( gameObject );
         }
-                
+        
         private void Start()
         {
             SessionPath = Application.persistentDataPath + "/session.dat";
@@ -68,30 +63,7 @@ namespace IncarnationEngine
             DefaultClientID = "69qjjs5euih1kok6cdjvru1r6o";
             BaseURL = "https://6zq8xeebml.execute-api.us-east-1.amazonaws.com/dev/";
             LoadSession();
-            Ledger.NewCharacterBuild();
-        }
-
-        static INE()
-        {
-            AttributeNames = new string[] { "Strength", "Finesse", "Perception", "Speed", "Endurance", "Resistance",
-                "Potency", "Essence", "Affinity" };
-            SkillNames = new string[] { "Striking", "Shooting", "Defense", "Disruption", "Combat Mobility", "Stealth", "Spell Mastery",
-                "Fire", "Frost", "Electricity", "Water", "Benevolent", "Malevolent", "Earth" };
-            CurrencyFormats = new string[] { "{0} Platinum", "{0} Gold", "{0} Silver", "{0} Copper" };
-
-            BaseDamageEfficiency = 100.0f;
-            BaseMitigation = 0.9930924954370359d;
-
-            BaseAspect = 20;
-            RetrainingRatio = 0.0025f;
-            ExcessExpConversion = 0.15f;
-            AspectWeightPower = 2;
-            EvenWeightedRatio = 3f * Mathf.Pow( 1f / 3f, AspectWeightPower );
-            MaxDistribution = 120;
-            RetrainingExpThreshold = 100;
-
-            ValidNamePattern = "^[A-Za-z]([-A-Za-z0-9' ]{1,30})[A-Za-z0-9]$";
-            ValidCharPattern = "[-A-Za-z0-9' ]";
+            //Ledger.NewCharacterBuild();
         }
 
         public static async Task<bool> Login( string username, string password, 
@@ -115,11 +87,9 @@ namespace IncarnationEngine
             if( authorized )
             {
                 SaveSession();
+                Data.LoadBaseData();
+                Ledger.LoadTeamList();
             }
-
-            INE.Ledger.TeamList = await GetData<INETeamEntry>( "team/list/" );
-
-            Ledger.RefreshTeamList();
 
             return authorized;
         }
@@ -202,50 +172,6 @@ namespace IncarnationEngine
         public static float ExpMultiplierPower( int aspectCount )
         {
             return aspectCount == 9 ? Core.expPowerAtNine : 0f;
-        }
-
-        public static string FormatCurrency( float value )
-        {
-            //1 platinum is 100 gold
-            //1 gold is 100 silver
-            //1 silver is 100 copper
-
-            List<string> currencies = new List<string>();
-            float remainder = value / 100; //expect value to be in gold, convert it to platinum
-
-            for( int i = 0; i < CurrencyFormats.Length; i++ )
-            {
-                int numberPieces = Mathf.FloorToInt( remainder );
-                currencies.Add( String.Format( CurrencyFormats[i], numberPieces ) );
-                remainder = 100 * ( remainder - numberPieces );
-            }
-
-            return currencies.Count > 0 ? String.Join( ", ", currencies ) : String.Format( CurrencyFormats[1], 0 );
-        }
-
-        public static float EffectivenssCalc( float dmgEfficiency )
-        {
-            if( dmgEfficiency < 0 )
-                dmgEfficiency = 0;
-
-            return dmgEfficiency / ( dmgEfficiency + BaseDamageEfficiency );
-        }
-
-        public static float MitigationValue( float mitigationAmount )
-        {
-            return (float)Math.Pow( BaseMitigation, (double)mitigationAmount );
-        }
-
-        public static float MitigationValue( float[] mitigationAmount )
-        {
-            float mitigationTotal = 0f;
-
-            //remove foreach and correct
-            foreach( float mitigationFactor in mitigationAmount )
-            {
-                mitigationTotal += mitigationFactor;
-            }
-            return (float)Math.Pow( BaseMitigation, mitigationTotal );
         }
     }
 
