@@ -13,7 +13,7 @@ namespace IncarnationEngine
 
         public void ClickNewTeam()
         {
-            INE.Ledger.StartNewTeam();
+            INE.UI.OpenNewTeam();
         }
 
         public void Activate( bool state = true )

@@ -49,12 +49,27 @@ namespace IncarnationEngine
             if( Regex.IsMatch( TeamName.text, INE.Format.ValidNamePattern ) )
             {
                 Activate( false );
-                bool created = await INE.Ledger.CommitNewTeam( TeamName.text );
+                int teamCreated = await INE.Ledger.CommitNewTeam( TeamName.text );
 
-                if( !created )
-                    Activate( true );
+                if( teamCreated >= 0 )
+                {
+                    bool teamLoaded = await INE.Ledger.LoadTeam( teamCreated );
+
+                    if( teamLoaded )
+                    {
+                        INE.UI.OpenCharacterBuilder( null );
+                    }
+                    else
+                    {
+                        Debug.Log( "Failed to load team" );
+                        INE.UI.OpenTeamList();
+                    }
+                }
                 else
+                {
+                    Debug.Log( "Team failed to be created" );
                     Activate( true );
+                }
             }
             else
             {

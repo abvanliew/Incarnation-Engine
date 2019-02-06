@@ -10,6 +10,7 @@ namespace IncarnationEngine
         public APITestUI ApiTest;
         public TeamListUI TeamList;
         public NewTeamUI NewTeam;
+        public TeamUI Team;
         public CharacterBuildUI CharacterBuild;
         public CharacterListUI CharacterList;
 
@@ -20,6 +21,7 @@ namespace IncarnationEngine
             ApiTest = newUI.ApiTest;
             TeamList = newUI.TeamList;
             NewTeam = newUI.NewTeam;
+            Team = newUI.Team;
             CharacterBuild = newUI.CharacterBuild;
             CharacterList = newUI.CharacterList;
         }
@@ -45,7 +47,7 @@ namespace IncarnationEngine
         public void OpenTeam()
         {
             DisableAll();
-            //Team.gameObject.SetActive( true );
+            Team.gameObject.SetActive( true );
         }
 
         public void OpenFormationBuilder( INEFormation editFormation )
@@ -72,6 +74,7 @@ namespace IncarnationEngine
             ApiTest.gameObject.SetActive( false );
             TeamList.gameObject.SetActive( false );
             NewTeam.gameObject.SetActive( false );
+            Team.gameObject.SetActive( false );
             CharacterBuild.gameObject.SetActive( false );
             CharacterList.gameObject.SetActive( false );
         }
@@ -84,6 +87,7 @@ namespace IncarnationEngine
         [SerializeField] public APITestUI ApiTest;
         [SerializeField] public TeamListUI TeamList;
         [SerializeField] public NewTeamUI NewTeam;
+        [SerializeField] public TeamUI Team;
         [SerializeField] public CharacterBuildUI CharacterBuild;
         [SerializeField] public CharacterListUI CharacterList;
     }

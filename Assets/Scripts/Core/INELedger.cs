@@ -10,6 +10,7 @@ namespace IncarnationEngine
         public List<INETeamSummary> TeamList = new List<INETeamSummary>();
         public INETeam CurrentTeam = null;
         public INECharacter InitialCharacter = null;
+        public bool TeamLoaded { get{ return CurrentTeam != null; } }
 
         public async Task<bool> LoadTeamList()
         {
@@ -24,29 +25,20 @@ namespace IncarnationEngine
             return listPopulated;
         }
 
-        public void StartNewTeam()
+        public async Task<int> CommitNewTeam( string newTeamName )
         {
-            INE.UI.OpenNewTeam();
-        }
-
-        public async Task<bool> CommitNewTeam( string newTeamName )
-        {
-            bool validRes = false;
+            int teamCreated = -1;
+            
             if( Regex.IsMatch( newTeamName, INE.Format.ValidNamePattern ) )
             {
-                INENewTeamPost postData = new INENewTeamPost( newTeamName );
-                INENewTeamResponse res = await INE.PostData<INENewTeamResponse>( "team/new", postData );
-
-                if( res != null )
+                INENewTeamResponse result = await INE.PostData<INENewTeamResponse>( "team/new", new INENewTeamPost( newTeamName ) );
+                if( result != null)
                 {
-                    validRes = true;
-                    //close new team dialog
-                    //get new team data?
-                    //start initial character builder
+                    teamCreated = result.Team;
                 }
             }
 
-            return validRes;
+            return teamCreated;
         }
 
         public void StartInitialCharacter()
@@ -58,7 +50,7 @@ namespace IncarnationEngine
             }
         }
 
-        public async void LoadTeam( int teamID )
+        public async Task<bool> LoadTeam( int teamID )
         {
             //Run a Get request to pull down the full team data
             //If it fails to get team, refresh team list
@@ -66,6 +58,8 @@ namespace IncarnationEngine
             Debug.Log( "UI Off" );
             await Task.Delay( 500 );
             Debug.Log( "UI On" );
+
+            return true;
         }
 
         private void CreateInitialCharacter()
@@ -105,6 +99,6 @@ namespace IncarnationEngine
 
     public class INENewTeamResponse
     {
-        public string Team;
+        public int Team;
     }
 }
