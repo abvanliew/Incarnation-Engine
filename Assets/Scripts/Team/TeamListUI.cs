@@ -33,18 +33,42 @@ namespace IncarnationEngine
             PopulateTeams();
         }
 
-        private void PopulateTeams()
+        private async void PopulateTeams()
         {
-            if( INE.Ledger.TeamList != null && INE.Ledger.TeamList.Count > 0 )
+            if( Teams == null )
             {
                 Teams = new List<TeamSelectorUI>();
-
-                for( int i = 0; i < INE.Ledger.TeamList.Count; i++ )
+            }
+            else
+            {
+                for( int i = 0; i < Teams.Count; i++ )
                 {
-                    RectTransform newPrefab = Instantiate( TeamSelectorPrefab );
-                    Teams.Add( newPrefab.GetComponent<TeamSelectorUI>() );
-                    newPrefab.transform.SetParent( ListParent.transform, false );
-                    Teams[i].SetTeam( INE.Ledger.TeamList[i] );
+                    Teams[i].gameObject.SetActive( false );
+                }
+            }
+
+            await INE.Ledger.LoadTeamList();
+
+            if( INE.Ledger.TeamList != null && INE.Ledger.TeamList.Count > 0 )
+            {
+                int apiCount = INE.Ledger.TeamList.Count;
+                int uiCount = Teams.Count;
+                int maxCount = apiCount >= uiCount ? apiCount : uiCount;
+
+                for( int i = 0; i < maxCount; i++ )
+                {
+                    if( i >= uiCount )
+                    {
+                        RectTransform newPrefab = Instantiate( TeamSelectorPrefab );
+                        Teams.Add( newPrefab.GetComponent<TeamSelectorUI>() );
+                        newPrefab.transform.SetParent( ListParent.transform, false );
+                    }
+
+                    if( i < apiCount )
+                    {
+                        Teams[i].gameObject.SetActive( true );
+                        Teams[i].SetTeam( INE.Ledger.TeamList[i] );
+                    }
                 }
             }
         }

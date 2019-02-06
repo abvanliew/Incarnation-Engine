@@ -88,7 +88,7 @@ namespace IncarnationEngine
             {
                 SaveSession();
                 Data.LoadBaseData();
-                Ledger.LoadTeamList();
+                UI.OpenTeamList();
             }
 
             return authorized;
@@ -100,7 +100,7 @@ namespace IncarnationEngine
                 Auth.SignOut();
         }
 
-        public static async Task<List<T>> GetData<T>( string callPath )
+        public static async Task<T> GetData<T>( string callPath )
         {
             HttpContent res = await Auth.GetData( BaseURL + callPath );
             INEResponse<T> parse = await res.ReadAsAsync<INEResponse<T>>();
@@ -116,14 +116,22 @@ namespace IncarnationEngine
             return parse;
         }
 
-        public static async Task<List<T>> PostData<T>( string callPath, object data )
+        public static async Task<T> PostData<T>( string callPath, object data )
         {
+            T responseData = default(T);
             string json = JsonConvert.SerializeObject( data, Formatting.Indented );
 
-            HttpContent res = await Auth.PostData( BaseURL + callPath, json );
-            INEResponse<T> parse = await res.ReadAsAsync<INEResponse<T>>();
+            Debug.Log( json );
 
-            return parse.body;
+            HttpContent res = await Auth.PostData( BaseURL + callPath, json );
+
+            if( res != null )
+            {
+                INEResponse<T> parse = await res.ReadAsAsync<INEResponse<T>>();
+                responseData = parse.body;
+            }
+
+            return responseData;
         }
 
         public static async Task<string> PostDataAsJson( string callPath, string data )
@@ -197,6 +205,6 @@ namespace IncarnationEngine
     public struct INEResponse<T>
     {
         public int statusCode;
-        public List<T> body;
+        public T body;
     }
 }

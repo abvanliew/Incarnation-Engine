@@ -5548,6 +5548,7 @@ MonoBehaviour:
     Login: {fileID: 1527988177}
     ApiTest: {fileID: 1312027561}
     TeamList: {fileID: 756897887}
+    NewTeam: {fileID: 1137617872}
     CharacterBuild: {fileID: 861743602}
     CharacterList: {fileID: 384143221}
   expPowerAtNine: 1.1
@@ -8132,7 +8133,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1137617869
 RectTransform:
   m_ObjectHideFlags: 0

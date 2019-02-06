@@ -11,29 +11,42 @@ namespace IncarnationEngine
         public INETeam CurrentTeam = null;
         public INECharacter InitialCharacter = null;
 
-        public async void LoadTeamList()
+        public async Task<bool> LoadTeamList()
         {
-            TeamList = await INE.GetData<INETeamSummary>( "team/list/" );
+            bool listPopulated = false;
+            TeamList = await INE.GetData<List<INETeamSummary>>( "team/list/" );
 
-            if( TeamList != null )
+            if( TeamList != null && TeamList.Count > 0 )
             {
-                INE.UI.OpenTeamList();
+                listPopulated = true;
             }
+
+            return listPopulated;
         }
 
         public void StartNewTeam()
         {
-            //CurrentTeam = new INETeam();
+            INE.UI.OpenNewTeam();
         }
 
-        public void CommitNewTeam( string newTeamName )
+        public async Task<bool> CommitNewTeam( string newTeamName )
         {
+            bool validRes = false;
             if( Regex.IsMatch( newTeamName, INE.Format.ValidNamePattern ) )
             {
-                //Start post command
-                //Get returned Team ID and update CurrentTeam with it
-                //Open CharacterBuilder for new character
+                INENewTeamPost postData = new INENewTeamPost( newTeamName );
+                INENewTeamResponse res = await INE.PostData<INENewTeamResponse>( "team/new", postData );
+
+                if( res != null )
+                {
+                    validRes = true;
+                    //close new team dialog
+                    //get new team data?
+                    //start initial character builder
+                }
             }
+
+            return validRes;
         }
 
         public void StartInitialCharacter()
@@ -78,5 +91,20 @@ namespace IncarnationEngine
         public float Wealth;
         public int CharacterCount;
         public float Leadership;
+    }
+
+    public class INENewTeamPost
+    {
+        public string TeamName;
+
+        public INENewTeamPost( string teamName )
+        {
+            TeamName = teamName;
+        }
+    }
+
+    public class INENewTeamResponse
+    {
+        public string Team;
     }
 }

@@ -9,6 +9,7 @@ namespace IncarnationEngine
         public LoginUI Login;
         public APITestUI ApiTest;
         public TeamListUI TeamList;
+        public NewTeamUI NewTeam;
         public CharacterBuildUI CharacterBuild;
         public CharacterListUI CharacterList;
 
@@ -18,6 +19,7 @@ namespace IncarnationEngine
             Login = newUI.Login;
             ApiTest = newUI.ApiTest;
             TeamList = newUI.TeamList;
+            NewTeam = newUI.NewTeam;
             CharacterBuild = newUI.CharacterBuild;
             CharacterList = newUI.CharacterList;
         }
@@ -32,6 +34,12 @@ namespace IncarnationEngine
         {
             DisableAll();
             TeamList.gameObject.SetActive( true );
+        }
+
+        public void OpenNewTeam()
+        {
+            DisableAll();
+            NewTeam.gameObject.SetActive( true );
         }
 
         public void OpenTeam()
@@ -63,6 +71,7 @@ namespace IncarnationEngine
             Login.gameObject.SetActive( false );
             ApiTest.gameObject.SetActive( false );
             TeamList.gameObject.SetActive( false );
+            NewTeam.gameObject.SetActive( false );
             CharacterBuild.gameObject.SetActive( false );
             CharacterList.gameObject.SetActive( false );
         }
@@ -74,6 +83,7 @@ namespace IncarnationEngine
         [SerializeField] public LoginUI Login;
         [SerializeField] public APITestUI ApiTest;
         [SerializeField] public TeamListUI TeamList;
+        [SerializeField] public NewTeamUI NewTeam;
         [SerializeField] public CharacterBuildUI CharacterBuild;
         [SerializeField] public CharacterListUI CharacterList;
     }

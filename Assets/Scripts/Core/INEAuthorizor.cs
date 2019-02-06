@@ -63,6 +63,7 @@ namespace IncarnationEngine
                         Client.DefaultRequestHeaders.Accept.Clear();
                         Client.DefaultRequestHeaders.Accept.Add( new MediaTypeWithQualityHeaderValue( "application/json" ) );
                         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( User.SessionTokens.IdToken );
+                        Debug.Log( User.SessionTokens.IdToken );
                         return true;
                     }
                 }
@@ -133,12 +134,19 @@ namespace IncarnationEngine
             {
                 try
                 {
+                    Debug.Log( "Pre post call" );
+                    Debug.Log( bodyJson );
+
                     HttpResponseMessage response = await Client.PostAsync( path, new StringContent( bodyJson, Encoding.UTF8, "application/json" ) );
 
-                    if( response.IsSuccessStatusCode )
+                    Debug.Log( "After post call" );
+
+                    if( response != null && response.IsSuccessStatusCode )
                     {
                         returnContent = response.Content;
                     }
+
+                    Debug.Log( returnContent );
                 }
                 catch( Exception e )
                 {

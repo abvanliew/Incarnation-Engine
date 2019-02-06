@@ -14,16 +14,7 @@ namespace IncarnationEngine
 
         public void ClickCreateTeam()
         {
-            if( Regex.IsMatch( TeamName.text, INE.Format.ValidNamePattern ) )
-            {
-                Activate( false );
-                INE.Ledger.CommitNewTeam( TeamName.text );
-            }
-            else
-            {
-                Debug.Log( "Invalid Team Name" );
-                //some code to flash the screen red or something
-            }
+            CommitTeam();
         }
 
         public void ClickCancel()
@@ -51,6 +42,25 @@ namespace IncarnationEngine
             }
 
             return validateChar;
+        }
+
+        private async void CommitTeam()
+        {
+            if( Regex.IsMatch( TeamName.text, INE.Format.ValidNamePattern ) )
+            {
+                Activate( false );
+                bool created = await INE.Ledger.CommitNewTeam( TeamName.text );
+
+                if( !created )
+                    Activate( true );
+                else
+                    Activate( true );
+            }
+            else
+            {
+                Debug.Log( "Invalid Team Name" );
+                //some code to flash the screen red or something
+            }
         }
     }
 }
