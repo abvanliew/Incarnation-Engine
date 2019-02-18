@@ -43,8 +43,11 @@ namespace IncarnationEngine
         public async Task<bool> Login( string password )
         {
             bool authorized = await Authorize( password: password );
+
             if( authorized )
                 SaveSession = new INESession( Endpoint, PoolID, ClientID, Username, password );
+            else
+                Debug.Log( "Failed to login" );
             return authorized;
         }
 
@@ -55,7 +58,7 @@ namespace IncarnationEngine
                 try
                 {
                     AuthFlowResponse AuthResponse = await User.StartWithSrpAuthAsync
-                            ( new InitiateSrpAuthRequest() { Password = password } ).ConfigureAwait( false );
+                        ( new InitiateSrpAuthRequest() { Password = password } ).ConfigureAwait( false );
 
                     if( AuthResponse != null )
                     {

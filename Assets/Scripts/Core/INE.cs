@@ -14,7 +14,7 @@ namespace IncarnationEngine
     {
         public static INE Core { get; private set; }
         public static INELedger Ledger { get; private set; }
-        public static INEGameData Data { get; private set; }
+        public static INEReferenceData Data { get; private set; }
         public static INEInterface UI { get; private set; }
         [SerializeField] public INEInterfaceList UIList = new INEInterfaceList();
 
@@ -47,7 +47,7 @@ namespace IncarnationEngine
                 //ensures that the static reference is correct
                 Core = this;
                 Ledger = new INELedger();
-                Data = new INEGameData();
+                Data = new INEReferenceData();
                 UI = new INEInterface( UIList );
             }
             //removes duplicates
@@ -102,8 +102,13 @@ namespace IncarnationEngine
 
         public static async Task<T> GetData<T>( string callPath )
         {
-            HttpContent res = await Auth.GetData( BaseURL + callPath );
-            INEResponse<T> parse = await res.ReadAsAsync<INEResponse<T>>();
+            INEResponse<T> parse = new INEResponse<T>();
+
+            if( Auth != null )
+            {
+                HttpContent response = await Auth.GetData( BaseURL + callPath );
+                parse = await response.ReadAsAsync<INEResponse<T>>();
+            }
 
             return parse.body;
         }

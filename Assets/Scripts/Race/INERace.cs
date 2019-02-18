@@ -9,6 +9,20 @@ namespace IncarnationEngine
         public string FullName { get; private set; }
         public bool StarterRace { get; private set; }
         public List<float> RacialModifiers { get; private set; }
+        public Dictionary<int, float> RacialModifersPairs
+        {
+            get
+            {
+                Dictionary<int, float> value = new Dictionary<int, float>();
+
+                for( int i = 0; i < RacialModifiers.Count; i++ )
+                {
+                    value.Add( i, RacialModifiers[i] );
+                }
+
+                return value;
+            }
+        }
 
         public INERace()
         {

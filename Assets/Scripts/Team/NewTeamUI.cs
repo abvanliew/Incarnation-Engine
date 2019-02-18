@@ -32,6 +32,7 @@ namespace IncarnationEngine
         private void Start()
         {
             TeamName.onValidateInput += delegate ( string input, int charIndex, char addedChar ) { return ValidateChar( addedChar ); };
+            TeamName.Select();
         }
 
         private char ValidateChar( char validateChar )

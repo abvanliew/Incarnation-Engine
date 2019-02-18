@@ -31,12 +31,24 @@ namespace IncarnationEngine
             }
         }
 
+        public INEAspectGroup( int aspectCount )
+        {
+            if( aspectCount > 0 )
+            {
+                Aspects = new Dictionary<int, INEAspect>();
+                for( int i = 0; i < aspectCount; i++ )
+                {
+                    Aspects.Add( i, new INEAspect( 1, 0, 0 ) );
+                }
+            }
+        }
+
         public void SetDistribution( int key, float value )
         {
             if( Aspects != null )
             {
                 if( Aspects.ContainsKey( key ) )
-                    Aspects[key].Ideal.Distribution = value < 0 ? 0 : value > INE.Character.MaxDistribution ? INE.Character.MaxDistribution : value;
+                    Aspects[key].Ideal.Distribution = value < 0 ? 0 : value > INE.Character.MaxAspectDistribution ? INE.Character.MaxAspectDistribution : value;
             }
         }
 
@@ -49,8 +61,19 @@ namespace IncarnationEngine
                     if( Aspects.ContainsKey( aspect.Key ) )
                     {
                         Aspects[aspect.Key].Ideal.Distribution = 
-                            aspect.Value < 0 ? 0 : aspect.Value > INE.Character.MaxDistribution ? INE.Character.MaxDistribution : aspect.Value;
+                            aspect.Value < 0 ? 0 : aspect.Value > INE.Character.MaxAspectDistribution ? INE.Character.MaxAspectDistribution : aspect.Value;
                     }
+                }
+            }
+        }
+
+        public void SetModifiers( Dictionary<int, float> newModifiers )
+        {
+            foreach( KeyValuePair<int, float> modifier in newModifiers )
+            {
+                if( Aspects.ContainsKey( modifier.Key ) )
+                {
+                    Aspects[modifier.Key].Modifier = modifier.Value < INE.Character.MinAspectModifer ? INE.Character.MinAspectModifer : modifier.Value;
                 }
             }
         }

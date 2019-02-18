@@ -7,15 +7,16 @@ namespace IncarnationEngine
 {
     public class INELedger
     {
-        public List<INETeamSummary> TeamList = new List<INETeamSummary>();
+        public List<INETeamEntryResponse> TeamList = new List<INETeamEntryResponse>();
         public INETeam CurrentTeam = null;
         public INECharacter InitialCharacter = null;
+        public List<INECharacter> Characters = new List<INECharacter>();
         public bool TeamLoaded { get{ return CurrentTeam != null; } }
 
         public async Task<bool> LoadTeamList()
         {
             bool listPopulated = false;
-            TeamList = await INE.GetData<List<INETeamSummary>>( "team/list/" );
+            TeamList = await INE.GetData<List<INETeamEntryResponse>>( "team/list/" );
 
             if( TeamList != null && TeamList.Count > 0 )
             {
@@ -55,11 +56,20 @@ namespace IncarnationEngine
             //Run a Get request to pull down the full team data
             //If it fails to get team, refresh team list
             //Otherwise launch into game menu
-            Debug.Log( "UI Off" );
-            await Task.Delay( 500 );
-            Debug.Log( "UI On" );
+            bool loaded = false;
+            INETeamSelector selectTeam = new INETeamSelector();
+            selectTeam.Team = teamID;
 
-            return true;
+            INETeamResponse team = await INE.PostData<INETeamResponse>( "team", selectTeam );
+            if( team.Team == teamID )
+            {
+                loaded = true;
+                List<INECharacterResponse> characters = await INE.PostData<List<INECharacterResponse>>( "team/character/list", selectTeam );
+                if( characters.Count == 0 )
+                    INE.UI.OpenCharacterBuilder( null );
+            }
+
+            return loaded;
         }
 
         private void CreateInitialCharacter()
@@ -78,7 +88,7 @@ namespace IncarnationEngine
         }
     }
 
-    public class INETeamSummary
+    public class INETeamEntryResponse
     {
         public int TeamIndex;
         public string TeamName;
@@ -97,8 +107,30 @@ namespace IncarnationEngine
         }
     }
 
+    public class INETeamSelector
+    {
+        public int Team;
+    }
+
     public class INENewTeamResponse
     {
         public int Team;
+    }
+
+    public class INETeamResponse
+    {
+        public int Team;
+        public string TeamName;
+        public float Wealth;
+        public float Leadership;
+    }
+
+    public class INECharacterResponse
+    {
+        public int ID;
+        public string FullName;
+        public int Tier;
+        public float Exp;
+        public int Race;
     }
 }

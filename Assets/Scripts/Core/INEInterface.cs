@@ -11,7 +11,7 @@ namespace IncarnationEngine
         public TeamListUI TeamList;
         public NewTeamUI NewTeam;
         public TeamUI Team;
-        public CharacterBuildUI CharacterBuild;
+        public CharacterBuilderUI CharacterBuild;
         public CharacterListUI CharacterList;
 
         public INEInterface( INEInterfaceList newUI )
@@ -28,55 +28,54 @@ namespace IncarnationEngine
 
         public void OpenLogin()
         {
-            DisableAll();
-            Login.gameObject.SetActive( true );
+            SwitchMenu( login: true );
         }
 
         public void OpenTeamList()
         {
-            DisableAll();
-            TeamList.gameObject.SetActive( true );
+            SwitchMenu( teamList: true );
         }
 
         public void OpenNewTeam()
         {
-            DisableAll();
-            NewTeam.gameObject.SetActive( true );
+            SwitchMenu( newTeam: true );
         }
 
         public void OpenTeam()
         {
-            DisableAll();
-            Team.gameObject.SetActive( true );
+            SwitchMenu( team: true );
         }
 
         public void OpenFormationBuilder( INEFormation editFormation )
         {
-            DisableAll();
-            //Team.gameObject.SetActive( true );
+            //SwitchMenu();
         }
 
         public void OpenCharacterList()
         {
-            DisableAll();
-            TeamList.gameObject.SetActive( true );
+            SwitchMenu( characterList: true );
         }
 
         public void OpenCharacterBuilder( INECharacter editCharacter )
         {
-            DisableAll();
-            TeamList.gameObject.SetActive( true );
+            SwitchMenu( characterBuilder: true );
+
+            if( editCharacter == null )
+            {
+                CharacterBuild.SetCharacter( new INECharacter(), true );
+            }
         }
 
-        private void DisableAll()
+        private void SwitchMenu( bool login = false, bool apiTest = false, bool teamList = false, bool newTeam = false, bool team = false,
+            bool characterBuilder = false, bool characterList = false )
         {
-            Login.gameObject.SetActive( false );
-            ApiTest.gameObject.SetActive( false );
-            TeamList.gameObject.SetActive( false );
-            NewTeam.gameObject.SetActive( false );
-            Team.gameObject.SetActive( false );
-            CharacterBuild.gameObject.SetActive( false );
-            CharacterList.gameObject.SetActive( false );
+            Login.gameObject.SetActive( login );
+            ApiTest.gameObject.SetActive( apiTest );
+            TeamList.gameObject.SetActive( teamList );
+            NewTeam.gameObject.SetActive( newTeam );
+            Team.gameObject.SetActive( team );
+            CharacterBuild.gameObject.SetActive( characterBuilder );
+            CharacterList.gameObject.SetActive( characterList );
         }
     }
 
@@ -88,7 +87,7 @@ namespace IncarnationEngine
         [SerializeField] public TeamListUI TeamList;
         [SerializeField] public NewTeamUI NewTeam;
         [SerializeField] public TeamUI Team;
-        [SerializeField] public CharacterBuildUI CharacterBuild;
+        [SerializeField] public CharacterBuilderUI CharacterBuild;
         [SerializeField] public CharacterListUI CharacterList;
     }
 }

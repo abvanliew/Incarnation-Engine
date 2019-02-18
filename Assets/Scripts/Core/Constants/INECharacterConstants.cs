@@ -11,17 +11,19 @@ namespace IncarnationEngine
         public readonly float ExcessExpConversion;
         public readonly float AspectWeightPower;
         public readonly float EvenWeightedRatio;
-        public readonly float MaxDistribution;
+        public readonly float MaxAspectDistribution;
+        public readonly float MinAspectModifer;
         public readonly float RetrainingExpThreshold;
 
         public INECharacterConstants()
         {
-            BaseAspect = 20;
+            BaseAspect = 100;
             RetrainingRatio = 0.0025f;
             ExcessExpConversion = 0.15f;
             AspectWeightPower = 2;
             EvenWeightedRatio = 3f * Mathf.Pow( 1f / 3f, AspectWeightPower );
-            MaxDistribution = 120;
+            MaxAspectDistribution = 120;
+            MinAspectModifer = .05f;
             RetrainingExpThreshold = 100;
         }
     }

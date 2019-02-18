@@ -11,7 +11,7 @@ namespace IncarnationEngine
         public Text CharacterCountDisplay;
         public Slider LeadershipDisplay;
 
-        private INETeamSummary Team;
+        private INETeamEntryResponse Team;
 
         public void SelectTeam()
         {
@@ -22,7 +22,7 @@ namespace IncarnationEngine
             }
         }
 
-        public void SetTeam( INETeamSummary team )
+        public void SetTeam( INETeamEntryResponse team )
         {
             Team = team;
             RefreshUI();

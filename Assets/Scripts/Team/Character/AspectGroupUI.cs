@@ -15,7 +15,7 @@ namespace IncarnationEngine
         public bool newCharacter = true;
 
         private INEAspectGroup AspectGroup;
-        private Dictionary<int, AspectUI> AspectsUI;
+        private Dictionary<int, AspectItemUI> AspectsUI;
 
         public void SetAspects( INEAspectGroup aspectGroup )
         {
@@ -28,14 +28,14 @@ namespace IncarnationEngine
                 TargetExpMultiplier.text = FormatExpMultipler( AspectGroup.ProjectedExpMultiplier );
                 MaxExpMultiplier.text = FormatExpMultipler( AspectGroup.IdealExpMultiplier );
 
-                AspectsUI = new Dictionary<int, AspectUI>();
+                AspectsUI = new Dictionary<int, AspectItemUI>();
 
                 foreach( KeyValuePair<int, INEAspect> aspect in AspectGroup.Aspects )
                 {
                     if( aspect.Value != null )
                     {
                         RectTransform newPrefab = Instantiate( AspectPrefab );
-                        AspectsUI.Add( aspect.Key, newPrefab.GetComponent<AspectUI>() );
+                        AspectsUI.Add( aspect.Key, newPrefab.GetComponent<AspectItemUI>() );
                         newPrefab.transform.SetParent( AspectParent.transform, false );
                         AspectsUI[aspect.Key].SetAspect( aspect.Key, INE.Format.AttributeNames[aspect.Key], 
                             aspect.Value.Current.Rank, aspect.Value.Current.Distribution,

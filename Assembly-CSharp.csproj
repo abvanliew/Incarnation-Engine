@@ -60,18 +60,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Models\Knight\scripts\rotator.cs" />
     <Compile Include="Assets\Scripts\Core\Constants\INECharacterConstants.cs" />
     <Compile Include="Assets\Scripts\Core\Constants\INECombatConstants.cs" />
     <Compile Include="Assets\Scripts\Core\Constants\INEFormating.cs" />
     <Compile Include="Assets\Scripts\Core\INE.cs" />
     <Compile Include="Assets\Scripts\Core\INEAuthorizor.cs" />
-    <Compile Include="Assets\Scripts\Core\INEGameData.cs" />
     <Compile Include="Assets\Scripts\Core\INEInterface.cs" />
     <Compile Include="Assets\Scripts\Core\INELedger.cs" />
+    <Compile Include="Assets\Scripts\Core\INEReferenceData.cs" />
     <Compile Include="Assets\Scripts\Race\INERace.cs" />
     <Compile Include="Assets\Scripts\Team\Character\AspectGroupUI.cs" />
-    <Compile Include="Assets\Scripts\Team\Character\AspectUI.cs" />
-    <Compile Include="Assets\Scripts\Team\Character\CharacterBuildUI.cs" />
+    <Compile Include="Assets\Scripts\Team\Character\AspectHeaderUI.cs" />
+    <Compile Include="Assets\Scripts\Team\Character\AspectItemUI.cs" />
+    <Compile Include="Assets\Scripts\Team\Character\CharacterBuilderUI.cs" />
     <Compile Include="Assets\Scripts\Team\Character\CharacterListUI.cs" />
     <Compile Include="Assets\Scripts\Team\Character\CharacterSelectorUI.cs" />
     <Compile Include="Assets\Scripts\Team\Character\INEAspectGroup.cs" />
@@ -89,8 +91,10 @@
     <Compile Include="Assets\Scripts\UI\APITestUI.cs" />
     <Compile Include="Assets\Scripts\UI\HeaderUI.cs" />
     <Compile Include="Assets\Scripts\UI\LoginUI.cs" />
+    <Compile Include="Assets\Scripts\UI\TooltipUI.cs" />
     <Compile Include="Assets\Scripts\Utilities\ComplexPolyFunct.cs" />
     <Compile Include="Assets\Scripts\Utilities\PolynomialFunct.cs" />
+    <None Include="Assets\Models\Knight\shaders\doublesidedshader.shader" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/Users/BROWNA84/Documents/GitHub/Incarnation-Engine/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
