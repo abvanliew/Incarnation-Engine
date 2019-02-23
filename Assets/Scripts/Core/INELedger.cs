@@ -76,15 +76,20 @@ namespace IncarnationEngine
         {
             Dictionary<int, float> newMods = new Dictionary<int, float>()
             {
+                { 0, 1 },
                 { 1, 1 },
                 { 2, 1 },
                 { 3, 1 },
                 { 4, 1 },
-                { 5, 1 },
-                { 6, 1.5f }
+                { 5, 1.5f }
             };
-            InitialCharacter = new INECharacter( 1000, true, newMods );
-            INE.UI.CharacterBuild.AttributesGroup.SetAspects( InitialCharacter.Attributes );
+            InitialCharacter = new INECharacter( 500, true, newMods );
+            INE.UI.OpenCharacterBuilder( InitialCharacter, true );
+        }
+
+        public void NewCharacterBuild()
+        {
+            CreateInitialCharacter();
         }
     }
 

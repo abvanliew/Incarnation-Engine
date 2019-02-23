@@ -19,7 +19,7 @@ namespace IncarnationEngine
         [SerializeField] public INEInterfaceList UIList = new INEInterfaceList();
 
         public static INEFormating Format { get; private set; } = new INEFormating();
-        public static INECharacterConstants Character { get; private set; } = new INECharacterConstants();
+        public static INECharacterConstants Char { get; private set; } = new INECharacterConstants();
         public static INECombatConstants Combat { get; private set; } = new INECombatConstants();
 
         private static INEAuthorizor Auth;
@@ -34,7 +34,7 @@ namespace IncarnationEngine
         public static string AccountDisplayName { get { return Auth != null ? Auth.DisplayName : ""; } }
 
         //when I remove this remember to remove the function at the bottom of the class that uses this value
-        public float expPowerAtNine = 1.1f;
+        public float rankPowerAtNine = 1.5f;
 
         //validate there there is only 1 instance of this game object
         private void Awake()
@@ -62,8 +62,24 @@ namespace IncarnationEngine
             DefaultPoolID = "us-east-1_qDlRDAqit";
             DefaultClientID = "69qjjs5euih1kok6cdjvru1r6o";
             BaseURL = "https://6zq8xeebml.execute-api.us-east-1.amazonaws.com/dev/";
-            LoadSession();
-            //Ledger.NewCharacterBuild();
+
+            TestStart();
+        }
+
+        private async void TestStart()
+        {
+            Data.LoadBaseData();
+            Ledger.NewCharacterBuild();
+
+            bool authorized = await LoadSession();
+
+            if( authorized )
+            {
+                bool listLoaded = await Ledger.LoadTeamList();
+
+                //if( listLoaded )
+                //    UI.OpenTeamList();
+            }
         }
 
         public static async Task<bool> Login( string username, string password, 
@@ -83,13 +99,6 @@ namespace IncarnationEngine
 
             Auth = new INEAuthorizor( newEndpoint, newPoolID, newClientID, username );
             bool authorized = await Auth.Login( password );
-
-            if( authorized )
-            {
-                SaveSession();
-                Data.LoadBaseData();
-                UI.OpenTeamList();
-            }
 
             return authorized;
         }
@@ -147,7 +156,7 @@ namespace IncarnationEngine
             return parse;
         }
 
-        private static async void LoadSession()
+        private static async Task<bool> LoadSession()
         {
             bool authorized = false;
 
@@ -169,6 +178,8 @@ namespace IncarnationEngine
             {
                 Auth = null;
             }
+
+            return authorized;
         }
 
         private static void SaveSession()
@@ -182,9 +193,9 @@ namespace IncarnationEngine
             }
         }
 
-        public static float ExpMultiplierPower( int aspectCount )
+        public static float RankPower( int aspectCount )
         {
-            return aspectCount == 9 ? Core.expPowerAtNine : 0f;
+            return aspectCount == 9 ? Core.rankPowerAtNine : 0f;
         }
     }
 

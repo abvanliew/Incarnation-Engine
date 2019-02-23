@@ -71,7 +71,6 @@
     <Compile Include="Assets\Scripts\Core\INEReferenceData.cs" />
     <Compile Include="Assets\Scripts\Race\INERace.cs" />
     <Compile Include="Assets\Scripts\Team\Character\AspectGroupUI.cs" />
-    <Compile Include="Assets\Scripts\Team\Character\AspectHeaderUI.cs" />
     <Compile Include="Assets\Scripts\Team\Character\AspectItemUI.cs" />
     <Compile Include="Assets\Scripts\Team\Character\CharacterBuilderUI.cs" />
     <Compile Include="Assets\Scripts\Team\Character\CharacterListUI.cs" />

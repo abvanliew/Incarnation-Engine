@@ -7,57 +7,69 @@ namespace IncarnationEngine
 {
     public class CharacterBuilderUI : MonoBehaviour
     {
-        public Button DescriptionTab;
-        public Button AttributesTab;
-        public Button SkillsTab;
-        public Button PerksTab;
-        public Button SummaryTab;
+        //Tab selections
+        public Button AppearanceTabButton;
+        public Button AspectsTabButton;
+        public Button InventoryTabButton;
+        public Button ActionsTabButton;
+        public Button SpellsTabButton;
+        public Button SummaryTabButton;
 
-        public RectTransform DescriptionFrame;
-        public RectTransform BuildOptionsFrame;
-        public RectTransform SummaryFrame;
-
-        //Description code
+        //Header
+        public Image ProfileIcon;
         public InputField FullNameInput;
         public Text FullNameDisplay;
         public Dropdown RaceSelector;
-        public Text RaceDisplay; 
+        public Text RaceDisplay;
+        public Text TierDisplay;
+        public RectTransform ExpPanel;
+        public Slider ExpBar;
+        public Slider ExpProjection;
+        public Text ProjectionLabel;
+        public Dropdown ProjectionSelector;
 
+        //This might get moved to a different script?
+        //public PerksUI PerksGroup;
         public AspectGroupUI AttributesGroup;
         public AspectGroupUI SkillsGroup;
-        public PerksUI PerksGroup;
 
         public Button DoneButton;
 
         private bool InitialCharacter;
-        private INECharacter CharacterRef;
+        private INECharacter ReferenceCharacter;
         private INECharacter CurrentCharacter;
 
         private List<int> RaceIDs;
+        private readonly Color WarningBackground = new Color( 1f, .6f, .6f );
 
-        public void ClickDescription()
+        public void ClickAppearanceTab()
         {
-            SwitchTab( description: true );
+
         }
 
-        public void ClickAttributes()
+        public void ClickAspectTab()
         {
-            SwitchTab( attributes: true );
+
         }
 
-        public void ClickSkills()
+        public void ClickInventoryTab()
         {
-            SwitchTab( skills: true );
+
         }
 
-        public void ClickPerks()
+        public void ClickActionsTab()
         {
-            SwitchTab( perks: true );
+
         }
 
-        public void ClickSummary()
+        public void ClickSpellsTab()
         {
-            SwitchTab( summary: true );
+
+        }
+
+        public void ClickSummaryTab()
+        {
+
         }
 
         public void ClickDone()
@@ -66,16 +78,33 @@ namespace IncarnationEngine
             //close out and open whatever else was under it
         }
 
+        public void ChangeName()
+        {
+            CheckNameInvalid();
+        }
+
         public void ChangeRace()
         {
             CurrentCharacter.ChangeRace( RaceSelector.value );
         }
 
+        public void ChangeProjection()
+        {
+            SetProjectionState( ProjectionSelector.value );
+        }
+
+        public void ChangeExpProjection()
+        {
+            if( ExpProjection.value < CurrentCharacter.Exp )
+                ExpProjection.value = CurrentCharacter.Exp;
+        }
+
         public void SetCharacter( INECharacter targetCharacter, bool initialCharacter = false )
         {
-            CharacterRef = targetCharacter;
+            ReferenceCharacter = targetCharacter;
             CurrentCharacter = targetCharacter.Clone;
             InitialCharacter = initialCharacter;
+
             PopulateCharacter();
         }
 
@@ -86,7 +115,7 @@ namespace IncarnationEngine
 
         private void Start()
         {
-            FullNameInput.onValidateInput += delegate( string input, int charIndex, char addedChar ) { return ValidateChar( addedChar ); };
+            FullNameInput.onValidateInput += delegate ( string input, int charIndex, char addedChar ) { return ValidateChar( addedChar ); };
         }
 
         private char ValidateChar( char validateChar )
@@ -95,57 +124,132 @@ namespace IncarnationEngine
             {
                 validateChar = '\0';
             }
-            
+
             return validateChar;
         }
 
-        private void SwitchTab( bool description = false, bool attributes = false, bool skills = false, bool perks = false, bool summary = false )
+        private void SwitchTab( bool appearance = false, bool aspect = false, bool summary = false )
         {
-            DescriptionFrame.gameObject.SetActive( description );
-            BuildOptionsFrame.gameObject.SetActive( attributes || skills || perks );
-            AttributesGroup.gameObject.SetActive( attributes );
-            SkillsGroup.gameObject.SetActive( skills );
-            PerksGroup.gameObject.SetActive( perks );
-            SummaryFrame.gameObject.SetActive( summary );
+            //DescriptionFrame.gameObject.SetActive( description );
+            //BuildOptionsFrame.gameObject.SetActive( attributes || skills || perks );
+            //AttributesGroup.gameObject.SetActive( attributes );
+            //SkillsGroup.gameObject.SetActive( skills );
+            //PerksGroup.gameObject.SetActive( perks );
+            //SummaryFrame.gameObject.SetActive( summary );
         }
 
         private void PopulateCharacter()
         {
-            if( InitialCharacter )
+            if( CurrentCharacter != null )
             {
-                RaceIDs = new List<int>();
-                List<string> raceNames = new List<string>();
+                SpellsTabButton.gameObject.SetActive( CurrentCharacter.IsCaster );
 
-                foreach( KeyValuePair<int, INERace> race in INE.Data.Races )
+                //some code to populate character icon
+
+                if( InitialCharacter )
                 {
-                    if( race.Value.StarterRace )
+                    //Header UI Cleanup
+                    FullNameInput.text = CurrentCharacter.FullName;
+
+                    RaceIDs = new List<int>();
+                    List<string> raceNames = new List<string>();
+
+                    foreach( KeyValuePair<int, INERace> race in INE.Data.Races )
                     {
-                        RaceIDs.Add( race.Key );
-                        raceNames.Add( race.Value.FullName );
+                        if( race.Value.StarterRace )
+                        {
+                            RaceIDs.Add( race.Key );
+                            raceNames.Add( race.Value.FullName );
+                        }
                     }
+
+                    RaceSelector.ClearOptions();
+                    RaceSelector.AddOptions( raceNames );
+                    RaceSelector.value = 0;
+                    ChangeRace();
+
+                    FullNameInput.gameObject.SetActive( true );
+                    FullNameDisplay.gameObject.SetActive( false );
+                    RaceSelector.gameObject.SetActive( true );
+                    RaceDisplay.gameObject.SetActive( false );
+                    ProjectionLabel.gameObject.SetActive( false );
+                    ProjectionSelector.gameObject.SetActive( false );
+                    AttributesGroup.SetAspects( CurrentCharacter.Attributes, InitialCharacter );
+                    SkillsGroup.SetAspects( CurrentCharacter.Skills, InitialCharacter );
+                }
+                else
+                {
+                    FullNameDisplay.text = CurrentCharacter.FullName;
+                    RaceDisplay.text = INE.Data.Races.ContainsKey( CurrentCharacter.RaceID ) ? INE.Data.Races[CurrentCharacter.RaceID].FullName : "Unknown Race";
+
+                    FullNameInput.gameObject.SetActive( false );
+                    FullNameDisplay.gameObject.SetActive( true );
+                    RaceSelector.gameObject.SetActive( false );
+                    RaceDisplay.gameObject.SetActive( true );
+                    ProjectionLabel.gameObject.SetActive( true );
+                    ProjectionSelector.gameObject.SetActive( true );
                 }
 
-                RaceSelector.ClearOptions();
-                RaceSelector.AddOptions( raceNames );
-                RaceSelector.value = 0;
-                ChangeRace();
+                //prep tier
+                int tier = CurrentCharacter.Tier < 1 ? 1 : CurrentCharacter.Tier > 5 ? 5 : CurrentCharacter.Tier;
+                ExpPanel.anchorMax = new Vector2( (float)tier / 5f, 1f );
+                TierDisplay.text = tier.ToString();
+                ExpBar.maxValue = CurrentCharacter.MaxExp;
+                ExpBar.value = CurrentCharacter.Exp;
+                ExpProjection.maxValue = CurrentCharacter.MaxExp;
+                //AttributesGroup.SetAspects( CurrentCharacter.Attributes, InitialCharacter );
+                //SkillsGroup.SetAspects( CurrentCharacter.Skills, InitialCharacter );
+                ProjectionSelector.value = 0;
+                SetProjectionState( 0 );
+                Recalculate();
+            }
+        }
 
-                AttributesGroup.SetAspects( CurrentCharacter.Attributes );
-                AttributesGroup.ExpGained = CurrentCharacter.Exp;
-
-                FullNameInput.text = CurrentCharacter.FullName;
-
-                FullNameInput.gameObject.SetActive( true );
-                FullNameDisplay.gameObject.SetActive( false );
-                RaceSelector.gameObject.SetActive( true );
-                RaceDisplay.gameObject.SetActive( false );
+        private void CheckNameInvalid()
+        {
+            if( Regex.IsMatch( FullNameInput.text, INE.Format.ValidNamePattern ) )
+            {
+                FullNameInput.targetGraphic.color = Color.white;
             }
             else
             {
-                FullNameInput.gameObject.SetActive( false );
-                FullNameDisplay.gameObject.SetActive( true );
-                RaceSelector.gameObject.SetActive( false );
-                RaceDisplay.gameObject.SetActive( true );
+                FullNameInput.targetGraphic.color = WarningBackground;
+            }
+        }
+
+        private void SetProjectionState( int state )
+        {
+            if( state == 0 )
+            {
+                ExpProjection.value = CurrentCharacter.Exp;
+                ExpProjection.interactable = false;
+                AttributesGroup.EnableProjection( false );
+                SkillsGroup.EnableProjection( false );
+            }
+            else if( state == 1 )
+            {
+                ExpProjection.interactable = true;
+                AttributesGroup.EnableProjection( true );
+                SkillsGroup.EnableProjection( true );
+            }
+            else if( state == 2 )
+            {
+                ExpProjection.value = CurrentCharacter.MaxExp;
+                ExpProjection.interactable = false;
+                AttributesGroup.EnableProjection( true );
+                SkillsGroup.EnableProjection( true );
+            }
+        }
+
+        private void Recalculate()
+        {
+            if( ProjectionSelector.value == 0 )
+            {
+                CurrentCharacter.CurrentRanks();
+            }
+            else if( ProjectionSelector.value == 1 || ProjectionSelector.value == 2 )
+            {
+                CurrentCharacter.ProjectRanks( ExpProjection.value - CurrentCharacter.Exp );
             }
         }
     }

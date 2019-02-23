@@ -5,42 +5,62 @@ namespace IncarnationEngine
 {
     public class AspectItemUI : MonoBehaviour
     {
-        public Text Name;
+        public Text DisplayName;
         public Text CurrentValue;
-        public Text TargetValue;
         public Text ProjectedValue;
         public Slider CurrentDistribution;
         public Slider TargetDistribution;
         public Slider ProjectedDistribution;
 
-        [HideInInspector] public AspectGroupUI Parent;
-
         private int Key;
+        private AspectGroupUI Parent;
 
-        public void SetAspect( int key, string name, int currentRank, float currentDistribution,
-            int projectedRank, float projectedDistribution, int idealRank, float idealDistribution )
+        public void SetAspect( AspectGroupUI parent, int key, string displayName, float targetDistribution, int currentRank, float currentDistribution, 
+            float distributionMax, bool initialCharacter = false )
         {
+            Parent = parent;
             Key = key;
-            if( name != null )
-                Name.text = name;
+            if( displayName != null )
+                DisplayName.text = displayName;
+            TargetDistribution.value = targetDistribution;
+            TargetDistribution.maxValue = INE.Char.MaxDistribution;
             CurrentValue.text = currentRank.ToString();
-            CurrentDistribution.value = currentDistribution;
-            ProjectedValue.text = projectedRank.ToString();
-            ProjectedDistribution.value = projectedDistribution;
-            TargetValue.text = idealRank.ToString();
-            TargetDistribution.value = idealDistribution;
+
+            if( initialCharacter )
+            {
+                CurrentDistribution.gameObject.SetActive( false );
+                EnableProjection( false );
+            }
+            else
+            {
+                CurrentDistribution.value = currentDistribution;
+                CurrentDistribution.maxValue = INE.Char.MaxDistribution;
+                CurrentDistribution.gameObject.SetActive( true );
+                ProjectedDistribution.maxValue = INE.Char.MaxDistribution;
+            }
         }
 
-        public void SetProjected( int projectedRank, float projectedDistribution, int idealRank )
+        public void SetCurrent( int currentRank )
+        {
+            CurrentValue.text = currentRank.ToString();
+        }
+
+        public void SetProjected( int projectedRank, float projectedDistribution )
         {
             ProjectedValue.text = projectedRank.ToString();
             ProjectedDistribution.value = projectedDistribution;
-            TargetValue.text = idealRank.ToString();
+        }
+
+        public void EnableProjection( bool state = true )
+        {
+            ProjectedValue.gameObject.SetActive( state );
+            ProjectedDistribution.gameObject.SetActive( state );
         }
 
         public void DistributionChange()
         {
-            Parent.SetDistribution( Key, TargetDistribution.value );
+            if( Parent != null )
+                Parent.SetDistribution( Key, TargetDistribution.value );
         }
     }
 }
