@@ -9,27 +9,21 @@ namespace IncarnationEngine
         public Text CurrentRankBonus;
         public Text ProjectedRankBonus;
         public Text ProjectedLabel;
+        public Text DistributionWarningLabel;
         public RectTransform AspectPrefab;
         public RectTransform AspectListParent;
 
+        private CharacterBuilderUI Parent;
         private INEAspectGroup AspectGroup;
-        private bool InitialCharacter;
         private Dictionary<int, AspectItemUI> AspectsUI;
 
-        public void SetAspects( INEAspectGroup aspectGroup, bool initialCharacter = false )
+        //Set Aspects is just to connect UI, it does no other initial value setup other than determining the starting posistion of the target slider
+        public void SetAspects( CharacterBuilderUI parent, INEAspectGroup aspectGroup )
         {
-            if( aspectGroup != null )
+            if( parent != null && aspectGroup != null )
             {
+                Parent = parent;
                 AspectGroup = aspectGroup;
-                InitialCharacter = initialCharacter;
-                if( InitialCharacter )
-                    EnableProjection( false );
-
-                //AspectGroup.BaseRanks();
-                //AspectGroup.ProjectRanks( ExpGained, setToIdeal: newCharacter );
-                //BaseExpMultiplier.text = FormatExpMultipler( AspectGroup.CurrentExpMultiplier );
-                //TargetExpMultiplier.text = FormatExpMultipler( AspectGroup.ProjectedExpMultiplier );
-                //MaxExpMultiplier.text = FormatExpMultipler( AspectGroup.IdealExpMultiplier );
 
                 AspectsUI = new Dictionary<int, AspectItemUI>();
 
@@ -40,8 +34,75 @@ namespace IncarnationEngine
                         RectTransform newPrefab = Instantiate( AspectPrefab );
                         AspectsUI.Add( aspect.Key, newPrefab.GetComponent<AspectItemUI>() );
                         newPrefab.transform.SetParent( AspectListParent.transform, false );
-                        AspectsUI[aspect.Key].SetAspect( this, aspect.Key, AspectGroup.AspectName( aspect.Key ), aspect.Value.TargetDistribution, 
-                            aspect.Value.Current.Rank, aspect.Value.Current.Distribution, INE.Char.MaxDistribution, InitialCharacter );
+                        AspectsUI[aspect.Key].SetAspect( this, aspect.Key, AspectGroup.AspectName( aspect.Key ), aspect.Value.TargetDistribution );
+                    }
+                }
+            }
+        }
+
+        public void SetInitial()
+        {
+            if( Parent != null && AspectGroup != null )
+            {
+                CurrentRankBonus.text = INE.Format.RankBonus( AspectGroup.ProjectedRankBonus );
+
+                foreach( KeyValuePair<int, INEAspect> aspect in AspectGroup.Aspects )
+                {
+                    if( aspect.Value != null && AspectsUI.ContainsKey( aspect.Key ) )
+                    {
+                        AspectsUI[aspect.Key].SetInitial( aspect.Value.Projected.Rank );
+                    }
+                }
+
+                UpdateWarning();
+            }
+        }
+
+        public void UpdateInitial()
+        {
+            if( Parent != null && AspectGroup != null )
+            {
+                CurrentRankBonus.text = INE.Format.RankBonus( AspectGroup.ProjectedRankBonus );
+
+                foreach( KeyValuePair<int, INEAspect> aspect in AspectGroup.Aspects )
+                {
+                    if( aspect.Value != null && AspectsUI.ContainsKey( aspect.Key ) )
+                    {
+                        AspectsUI[aspect.Key].UpdateInitial( aspect.Value.Projected.Rank );
+                    }
+                }
+            }
+        }
+
+        public void SetCurrent()
+        {
+            if( Parent != null && AspectGroup != null )
+            {
+                CurrentRankBonus.text = INE.Format.RankBonus( AspectGroup.CurrentRankBonus );
+
+                foreach( KeyValuePair<int, INEAspect> aspect in AspectGroup.Aspects )
+                {
+                    if( aspect.Value != null && AspectsUI.ContainsKey( aspect.Key ) )
+                    {
+                        AspectsUI[aspect.Key].SetCurrent( aspect.Value.Current.Rank, aspect.Value.Current.Distribution );
+                    }
+                }
+
+                UpdateWarning();
+            }
+        }
+
+        public void UpdateProjected()
+        {
+            if( Parent != null && AspectGroup != null )
+            {
+                ProjectedRankBonus.text = INE.Format.RankBonus( AspectGroup.ProjectedRankBonus );
+
+                foreach( KeyValuePair<int, INEAspect> aspect in AspectGroup.Aspects )
+                {
+                    if( aspect.Value != null && AspectsUI.ContainsKey( aspect.Key ) )
+                    {
+                        AspectsUI[aspect.Key].UpdateProjected( aspect.Value.Projected.Rank, aspect.Value.Projected.Distribution );
                     }
                 }
             }
@@ -67,32 +128,20 @@ namespace IncarnationEngine
 
         public void SetDistribution( int key, float value )
         {
-            if( AspectGroup.Aspects != null && AspectGroup.Aspects.ContainsKey( key ) )
+            if( Parent != null && AspectGroup.Aspects != null && AspectGroup.Aspects.ContainsKey( key ) )
             {
                 AspectGroup.SetDistribution( key, value );
-                UpdateValues();
+                Parent.Recalculate();
+                UpdateWarning();
             }
         }
 
-        public void UpdateValues()
+        private void UpdateWarning()
         {
-            //AspectGroup.ProjectRanks( ExpGained, setToIdeal: newCharacter );
-            //TargetExpMultiplier.text = FormatExpMultipler( AspectGroup.ProjectedExpMultiplier );
-            //MaxExpMultiplier.text = FormatExpMultipler( AspectGroup.IdealExpMultiplier );
-
-            //foreach( KeyValuePair<int, INEAspect> aspect in AspectGroup.Aspects )
-            //{
-            //    if( aspect.Value != null && AspectsUI.ContainsKey( aspect.Key ) )
-            //    {
-            //        AspectsUI[aspect.Key].SetProjected( aspect.Value.Projected.Rank, aspect.Value.Projected.Distribution,
-            //            aspect.Value.Ideal.Rank );
-            //    }
-            //}
-        }
-
-        private string FormatExpMultipler( float value )
-        {
-            return value <= 0 ? "-" : string.Format( "{0}%", Mathf.Round( 1000 * ( value - 1 ) ) / 10 );
+            if( AspectGroup != null )
+            {
+                DistributionWarningLabel.gameObject.SetActive( !AspectGroup.DistributionValid );
+            }
         }
     }
 }

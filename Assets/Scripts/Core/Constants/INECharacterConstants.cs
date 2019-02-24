@@ -4,6 +4,8 @@ using UnityEngine;
 
 namespace IncarnationEngine
 {
+    public enum AspectType { Attributes, Skills };
+
     public class INECharacterConstants
     {
         public readonly float BaseAspect;
@@ -12,6 +14,7 @@ namespace IncarnationEngine
         public readonly float ExcessExpConversion;
         public readonly float WeightPower;
         public readonly float EvenWeightedRatio;
+        public readonly float BaseRankPower;
         public readonly float UnevenRankPower;
         public readonly float MaxDistribution;
         public readonly float MinModifier;
@@ -28,13 +31,24 @@ namespace IncarnationEngine
             ExcessExpConversion = 0.25f;
             WeightPower = 2;
             EvenWeightedRatio = 3f * Mathf.Pow( 1f / 3f, WeightPower );
-            UnevenRankPower = 0.5f;
+            BaseRankPower = 0.5f;
+            UnevenRankPower = 1.5f;
             MaxDistribution = 120;
             MinModifier = 0.05f;
             ExpPerTier = 1000;
             BaseAttributeRanks = 1000;
             AttributeRankIncrementPerTier = 500;
             SkillRankRatio = 0.8f;
+        }
+
+        public float EvenRankPower( int aspectCount )
+        {
+            return BaseRankPower;
+        }
+
+        public bool ValidAspect( int key, AspectType type )
+        {
+            return true;
         }
 
         public float MaxExp( int tier )

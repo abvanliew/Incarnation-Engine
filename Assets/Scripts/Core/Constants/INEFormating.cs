@@ -48,5 +48,10 @@ namespace IncarnationEngine
 
             return currencies.Count > 0 ? String.Join( ", ", currencies ) : String.Format( CurrencyFormats[1], 0 );
         }
+
+        public string RankBonus( float value )
+        {
+            return value <= 0 ? "-" : string.Format( "{0}%", Mathf.Round( 1000 * ( value - 1 ) ) / 10 );
+        }
     }
 }

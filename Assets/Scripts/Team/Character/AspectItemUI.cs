@@ -15,46 +15,67 @@ namespace IncarnationEngine
         private int Key;
         private AspectGroupUI Parent;
 
-        public void SetAspect( AspectGroupUI parent, int key, string displayName, float targetDistribution, int currentRank, float currentDistribution, 
-            float distributionMax, bool initialCharacter = false )
+        public void SetAspect( AspectGroupUI parent, int key, string displayName, float targetDistribution )
         {
-            Parent = parent;
-            Key = key;
-            if( displayName != null )
-                DisplayName.text = displayName;
-            TargetDistribution.value = targetDistribution;
-            TargetDistribution.maxValue = INE.Char.MaxDistribution;
-            CurrentValue.text = currentRank.ToString();
+            if( parent != null )
+            {
+                Parent = parent;
+                Key = key;
+                if( displayName != null )
+                    DisplayName.text = displayName;
 
-            if( initialCharacter )
+                TargetDistribution.maxValue = INE.Char.MaxDistribution;
+                CurrentDistribution.maxValue = INE.Char.MaxDistribution;
+                ProjectedDistribution.maxValue = INE.Char.MaxDistribution;
+
+                TargetDistribution.value = targetDistribution;
+            }
+        }
+
+        public void SetInitial( int rank )
+        {
+            if( Parent != null )
             {
                 CurrentDistribution.gameObject.SetActive( false );
                 EnableProjection( false );
+                UpdateInitial( rank );
             }
-            else
+        }
+
+        public void UpdateInitial( int rank )
+        {
+            if( Parent != null )
+            {
+                CurrentValue.text = rank.ToString();
+            }
+        }
+
+        public void SetCurrent( int currentRank, float currentDistribution )
+        {
+            if( Parent != null )
             {
                 CurrentDistribution.value = currentDistribution;
-                CurrentDistribution.maxValue = INE.Char.MaxDistribution;
                 CurrentDistribution.gameObject.SetActive( true );
-                ProjectedDistribution.maxValue = INE.Char.MaxDistribution;
+                CurrentValue.text = currentRank.ToString();
             }
         }
 
-        public void SetCurrent( int currentRank )
+        public void UpdateProjected( int projectedRank, float projectedDistribution )
         {
-            CurrentValue.text = currentRank.ToString();
-        }
-
-        public void SetProjected( int projectedRank, float projectedDistribution )
-        {
-            ProjectedValue.text = projectedRank.ToString();
-            ProjectedDistribution.value = projectedDistribution;
+            if( Parent != null )
+            {
+                ProjectedValue.text = projectedRank.ToString();
+                ProjectedDistribution.value = projectedDistribution;
+            }
         }
 
         public void EnableProjection( bool state = true )
         {
-            ProjectedValue.gameObject.SetActive( state );
-            ProjectedDistribution.gameObject.SetActive( state );
+            if( Parent != null )
+            {
+                ProjectedValue.gameObject.SetActive( state );
+                ProjectedDistribution.gameObject.SetActive( state );
+            }
         }
 
         public void DistributionChange()

@@ -15,38 +15,22 @@ namespace IncarnationEngine
         public float ModelRadius { get; private set; }
         public float ModelHeight { get; private set; }
         public bool IsCaster { get; private set; }
-        public string Archetype { get; private set; }
+        public INEArchetype Archetype { get; private set; }
         public INEAspectGroup Attributes { get; private set; }
         public INEAspectGroup Skills { get; private set; }
         public List<int> Perks { get; private set; }
         public INELayout DefaultLayout { get; private set; }
         public INECharacter Clone { get { return (INECharacter)this.MemberwiseClone(); } }
 
-        public INECharacter( float maxExp, bool isCaster, Dictionary<int, float> racialModifers )
-        {
-            int attributeCount = isCaster ? 9 : 6;
-            Attributes = new INEAspectGroup( attributeCount, racialModifers, INEAspectGroup.AspectType.Attributes );
-            FullName = "New Character";
-            Tier = 5;
-            Exp = 500;
-            PerkRetraining = .5f;
-        }
-
-        public INECharacter( string name, int race, int tier )
-        {
-            FullName = name;
-            RaceID = race;
-            Tier = tier;
-        }
-
         public INECharacter()
         {
-            FullName = "";
+            FullName = "New Character";
             RaceID = 0;
             Tier = 5;
             Exp = 500;
-            Attributes = new INEAspectGroup( 9 );
-            Skills = new INEAspectGroup( 3 );
+            Archetype = INE.Data.Archetypes[0] ?? new INEArchetype();
+            PopulateAspects();
+            ChangeRace( RaceID );
             Perks = new List<int>();
             DefaultLayout = new INELayout();
         }
@@ -67,13 +51,60 @@ namespace IncarnationEngine
                 Skills.CurrentRanks( INE.Char.SkillRanks( Exp, Tier ) );
         }
 
-        public void ProjectRanks( float expGained, float retrainingGained = 0 )
+        public void ProjectRanks( float expGained, float retrainingGained = 0, bool setToIdeal = false )
         {
             float projectedRetraining = retrainingGained + INE.Char.RankRetraining( Exp, expGained, Tier );
             float projectedExp = Exp + expGained > MaxExp ? MaxExp : Exp + expGained;
 
-            Attributes.ProjectRanks( INE.Char.AttributeRanks( projectedExp, Tier ), projectedRetraining );
-            Skills.ProjectRanks( INE.Char.SkillRanks( projectedExp, Tier ), projectedRetraining );
+            Attributes.ProjectRanks( INE.Char.AttributeRanks( projectedExp, Tier ), projectedRetraining, setToIdeal );
+            Skills.ProjectRanks( INE.Char.SkillRanks( projectedExp, Tier ), projectedRetraining, setToIdeal );
+        }
+
+        private void PopulateAspects()
+        {
+            bool attributesPopulated = false;
+            bool skillsPopulated = false;
+
+            if( Archetype != null )
+            {
+                if( Archetype.AttributeIDs != null )
+                {
+                    Dictionary<int, float> distributions = new Dictionary<int, float>();
+
+                    for( int i = 0; i < Archetype.AttributeIDs.Count; i++ )
+                    {
+                        if( INE.Char.ValidAspect( Archetype.AttributeIDs[i], AspectType.Attributes ) )
+                        {
+                            distributions.Add( Archetype.AttributeIDs[i], 0 );
+                        }
+                    }
+
+                    Attributes = new INEAspectGroup( distributions, AspectType.Attributes );
+                    attributesPopulated = true;
+                }
+
+                if( Archetype.SkillIDs != null )
+                {
+                    Dictionary<int, float> distributions = new Dictionary<int, float>();
+
+                    for( int i = 0; i < Archetype.SkillIDs.Count; i++ )
+                    {
+                        if( INE.Char.ValidAspect( Archetype.SkillIDs[i], AspectType.Skills ) )
+                        {
+                            distributions.Add( Archetype.SkillIDs[i], 0 );
+                        }
+                    }
+
+                    Skills = new INEAspectGroup( distributions, AspectType.Skills );
+                    skillsPopulated = true;
+                }
+            }
+
+            if( !attributesPopulated )
+                Attributes = new INEAspectGroup( AspectType.Attributes );
+
+            if( !skillsPopulated )
+                Skills = new INEAspectGroup( AspectType.Skills );
         }
     }
 }

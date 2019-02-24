@@ -75,6 +75,7 @@
     <Compile Include="Assets\Scripts\Team\Character\CharacterBuilderUI.cs" />
     <Compile Include="Assets\Scripts\Team\Character\CharacterListUI.cs" />
     <Compile Include="Assets\Scripts\Team\Character\CharacterSelectorUI.cs" />
+    <Compile Include="Assets\Scripts\Team\Character\INEArchetype.cs" />
     <Compile Include="Assets\Scripts\Team\Character\INEAspectGroup.cs" />
     <Compile Include="Assets\Scripts\Team\Character\INECharacter.cs" />
     <Compile Include="Assets\Scripts\Team\Character\INELayout.cs" />

@@ -6,10 +6,12 @@ namespace IncarnationEngine
     public class INEReferenceData
     {
         public Dictionary<int, INERace> Races { get; private set; }
+        public List<INEArchetype> Archetypes { get; private set; }
 
         public void LoadBaseData()
         {
             LoadRaces();
+            LoadArchetypes();
         }
 
         private void LoadRaces()
@@ -29,7 +31,7 @@ namespace IncarnationEngine
                 .95f,
                 1.05f,
                 1.75f,
-                13f,
+                1.3f,
                 .9f } ) );
             Races.Add( 2, new INERace( "Florir", true, new List<float>() {
                 .7f,
@@ -66,6 +68,17 @@ namespace IncarnationEngine
                 1.05f,
                 1.1f,
                 1.1f } ) );
+        }
+
+        private void LoadArchetypes()
+        {
+            Archetypes = new List<INEArchetype>() {
+                new INEArchetype( 
+                    "Magus",
+                    new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7, 8 },
+                    new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 }
+                )
+            };
         }
     }
 }

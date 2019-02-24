@@ -28,10 +28,9 @@ namespace IncarnationEngine
         public Text ProjectionLabel;
         public Dropdown ProjectionSelector;
 
-        //This might get moved to a different script?
         //public PerksUI PerksGroup;
-        public AspectGroupUI AttributesGroup;
-        public AspectGroupUI SkillsGroup;
+        public AspectGroupUI AttributeGroup;
+        public AspectGroupUI SkillGroup;
 
         public Button DoneButton;
 
@@ -85,12 +84,17 @@ namespace IncarnationEngine
 
         public void ChangeRace()
         {
-            CurrentCharacter.ChangeRace( RaceSelector.value );
+            if( RaceIDs != null && RaceSelector.value >= 0 && RaceSelector.value < RaceIDs.Count )
+            {
+                CurrentCharacter.ChangeRace( RaceIDs[RaceSelector.value] );
+                Recalculate();
+            }
         }
 
         public void ChangeProjection()
         {
             SetProjectionState( ProjectionSelector.value );
+            Recalculate();
         }
 
         public void ChangeExpProjection()
@@ -142,15 +146,31 @@ namespace IncarnationEngine
         {
             if( CurrentCharacter != null )
             {
+                //Hook up attribute and skull UI code
+                AttributeGroup.SetAspects( this, CurrentCharacter.Attributes );
+                SkillGroup.SetAspects( this, CurrentCharacter.Skills );
+
                 SpellsTabButton.gameObject.SetActive( CurrentCharacter.IsCaster );
 
                 //some code to populate character icon
 
+                //prep tier
+                int tier = CurrentCharacter.Tier < 1 ? 1 : CurrentCharacter.Tier > 5 ? 5 : CurrentCharacter.Tier;
+                ExpPanel.anchorMax = new Vector2( (float)tier / 5f, 1f );
+                TierDisplay.text = tier.ToString();
+                ExpBar.maxValue = CurrentCharacter.MaxExp;
+                ExpBar.value = CurrentCharacter.Exp;
+                ExpProjection.maxValue = CurrentCharacter.MaxExp;
+
+                //Defaults to no projection
+                ProjectionSelector.value = 0;
+                SetProjectionState( 0 );
+
                 if( InitialCharacter )
                 {
-                    //Header UI Cleanup
                     FullNameInput.text = CurrentCharacter.FullName;
 
+                    //Populate Race list and update race reference
                     RaceIDs = new List<int>();
                     List<string> raceNames = new List<string>();
 
@@ -166,42 +186,41 @@ namespace IncarnationEngine
                     RaceSelector.ClearOptions();
                     RaceSelector.AddOptions( raceNames );
                     RaceSelector.value = 0;
+                    //Ensure that current character has the values for Race
                     ChangeRace();
 
+                    //Hide static name and race displays replacing them with edit fields, also disable projection selections
                     FullNameInput.gameObject.SetActive( true );
                     FullNameDisplay.gameObject.SetActive( false );
                     RaceSelector.gameObject.SetActive( true );
                     RaceDisplay.gameObject.SetActive( false );
                     ProjectionLabel.gameObject.SetActive( false );
                     ProjectionSelector.gameObject.SetActive( false );
-                    AttributesGroup.SetAspects( CurrentCharacter.Attributes, InitialCharacter );
-                    SkillsGroup.SetAspects( CurrentCharacter.Skills, InitialCharacter );
+
+                    //Calculate initial numbers
+                    CurrentCharacter.ProjectRanks( CurrentCharacter.Exp, setToIdeal: true );
+                    AttributeGroup.SetInitial();
+                    SkillGroup.SetInitial();
                 }
                 else
                 {
+                    //set name and race
                     FullNameDisplay.text = CurrentCharacter.FullName;
                     RaceDisplay.text = INE.Data.Races.ContainsKey( CurrentCharacter.RaceID ) ? INE.Data.Races[CurrentCharacter.RaceID].FullName : "Unknown Race";
 
+                    //Use only static name and race displays, enable projection options
                     FullNameInput.gameObject.SetActive( false );
                     FullNameDisplay.gameObject.SetActive( true );
                     RaceSelector.gameObject.SetActive( false );
                     RaceDisplay.gameObject.SetActive( true );
                     ProjectionLabel.gameObject.SetActive( true );
                     ProjectionSelector.gameObject.SetActive( true );
-                }
 
-                //prep tier
-                int tier = CurrentCharacter.Tier < 1 ? 1 : CurrentCharacter.Tier > 5 ? 5 : CurrentCharacter.Tier;
-                ExpPanel.anchorMax = new Vector2( (float)tier / 5f, 1f );
-                TierDisplay.text = tier.ToString();
-                ExpBar.maxValue = CurrentCharacter.MaxExp;
-                ExpBar.value = CurrentCharacter.Exp;
-                ExpProjection.maxValue = CurrentCharacter.MaxExp;
-                //AttributesGroup.SetAspects( CurrentCharacter.Attributes, InitialCharacter );
-                //SkillsGroup.SetAspects( CurrentCharacter.Skills, InitialCharacter );
-                ProjectionSelector.value = 0;
-                SetProjectionState( 0 );
-                Recalculate();
+                    //Set current character values
+                    CurrentCharacter.CurrentRanks();
+                    AttributeGroup.SetCurrent();
+                    SkillGroup.SetCurrent();
+                }
             }
         }
 
@@ -223,33 +242,43 @@ namespace IncarnationEngine
             {
                 ExpProjection.value = CurrentCharacter.Exp;
                 ExpProjection.interactable = false;
-                AttributesGroup.EnableProjection( false );
-                SkillsGroup.EnableProjection( false );
+                AttributeGroup.EnableProjection( false );
+                SkillGroup.EnableProjection( false );
             }
             else if( state == 1 )
             {
                 ExpProjection.interactable = true;
-                AttributesGroup.EnableProjection( true );
-                SkillsGroup.EnableProjection( true );
+                AttributeGroup.EnableProjection( true );
+                SkillGroup.EnableProjection( true );
             }
             else if( state == 2 )
             {
                 ExpProjection.value = CurrentCharacter.MaxExp;
                 ExpProjection.interactable = false;
-                AttributesGroup.EnableProjection( true );
-                SkillsGroup.EnableProjection( true );
+                AttributeGroup.EnableProjection( true );
+                SkillGroup.EnableProjection( true );
             }
         }
 
-        private void Recalculate()
+        public void Recalculate()
         {
-            if( ProjectionSelector.value == 0 )
+            if( InitialCharacter )
             {
-                CurrentCharacter.CurrentRanks();
+                CurrentCharacter.ProjectRanks( CurrentCharacter.Exp, setToIdeal: true );
+                AttributeGroup.UpdateInitial();
+                SkillGroup.UpdateInitial();
             }
-            else if( ProjectionSelector.value == 1 || ProjectionSelector.value == 2 )
+            else if( ProjectionSelector.value == 1 )
             {
                 CurrentCharacter.ProjectRanks( ExpProjection.value - CurrentCharacter.Exp );
+                AttributeGroup.UpdateProjected();
+                SkillGroup.UpdateProjected();
+            }
+            else if( ProjectionSelector.value == 2 )
+            {
+                CurrentCharacter.ProjectRanks( ExpProjection.value - CurrentCharacter.Exp, setToIdeal: true );
+                AttributeGroup.UpdateProjected();
+                SkillGroup.UpdateProjected();
             }
         }
     }

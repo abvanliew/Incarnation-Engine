@@ -74,16 +74,7 @@ namespace IncarnationEngine
 
         private void CreateInitialCharacter()
         {
-            Dictionary<int, float> newMods = new Dictionary<int, float>()
-            {
-                { 0, 1 },
-                { 1, 1 },
-                { 2, 1 },
-                { 3, 1 },
-                { 4, 1 },
-                { 5, 1.5f }
-            };
-            InitialCharacter = new INECharacter( 500, true, newMods );
+            InitialCharacter = new INECharacter();
             INE.UI.OpenCharacterBuilder( InitialCharacter, true );
         }
 

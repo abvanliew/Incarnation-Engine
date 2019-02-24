@@ -33,9 +33,6 @@ namespace IncarnationEngine
 
         public static string AccountDisplayName { get { return Auth != null ? Auth.DisplayName : ""; } }
 
-        //when I remove this remember to remove the function at the bottom of the class that uses this value
-        public float rankPowerAtNine = 1.5f;
-
         //validate there there is only 1 instance of this game object
         private void Awake()
         {
@@ -66,20 +63,20 @@ namespace IncarnationEngine
             TestStart();
         }
 
-        private async void TestStart()
+        private void TestStart()
         {
             Data.LoadBaseData();
             Ledger.NewCharacterBuild();
 
-            bool authorized = await LoadSession();
+            //bool authorized = await LoadSession();
 
-            if( authorized )
-            {
-                bool listLoaded = await Ledger.LoadTeamList();
+            //if( authorized )
+            //{
+            //    bool listLoaded = await Ledger.LoadTeamList();
 
-                //if( listLoaded )
-                //    UI.OpenTeamList();
-            }
+            //    //if( listLoaded )
+            //    //    UI.OpenTeamList();
+            //}
         }
 
         public static async Task<bool> Login( string username, string password, 
@@ -191,11 +188,6 @@ namespace IncarnationEngine
                 bf.Serialize( file, Auth.SaveSession );
                 file.Close();
             }
-        }
-
-        public static float RankPower( int aspectCount )
-        {
-            return aspectCount == 9 ? Core.rankPowerAtNine : 0f;
         }
     }
 

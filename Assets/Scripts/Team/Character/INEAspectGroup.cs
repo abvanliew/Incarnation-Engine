@@ -6,40 +6,59 @@ namespace IncarnationEngine
 {
     public class INEAspectGroup
     {
-        public enum AspectType { Attributes, Skills };
-
         public Dictionary<int, INEAspect> Aspects { get; private set; }
-        public float CurrentRankMultiplier { get; private set; }
-        public float ProjectedRankMultiplier { get; private set; }
+        public float CurrentRankBonus { get; private set; }
+        public float ProjectedRankBonus { get; private set; }
         public AspectType Type { get; private set; }
+        public bool DistributionValid { get; private set; }
 
-        public INEAspectGroup( int aspectCount, Dictionary<int, float> aspectModifers, AspectType type )
+        public INEAspectGroup( Dictionary<int, float> distributions, AspectType type )
         {
-            if( aspectCount > 0 )
+            if( distributions != null )
             {
                 Type = type;
                 Aspects = new Dictionary<int, INEAspect>();
-                for( int i = 0; i < aspectCount; i++ )
-                {
-                    float modifer = 1f;
-                    if( aspectModifers != null && aspectModifers.ContainsKey( i ) )
-                        modifer = aspectModifers[i];
+                bool distributionValid = false;
 
-                    Aspects.Add( i, new INEAspect( modifer, 0, 0 ) );
+                foreach( KeyValuePair<int, float> item in distributions )
+                {
+                    if( INE.Char.ValidAspect( item.Key, type ) )
+                    {
+                        float distribution = item.Value < 0 ? 0 : item.Value > INE.Char.MaxDistribution ? INE.Char.MaxDistribution : item.Value;
+
+                        if( distribution > 0 )
+                            distributionValid = true;
+
+                        Aspects.Add( item.Key, new INEAspect( 1f, distribution, distribution ) );
+                    }
                 }
+
+                DistributionValid = distributionValid;
             }
         }
 
-        public INEAspectGroup( int aspectCount )
+        public INEAspectGroup()
         {
-            if( aspectCount > 0 )
+            Type = AspectType.Attributes;
+            Aspects = new Dictionary<int, INEAspect>();
+            for( int i = 0; i < 6; i++ )
             {
-                Aspects = new Dictionary<int, INEAspect>();
-                for( int i = 0; i < aspectCount; i++ )
-                {
-                    Aspects.Add( i, new INEAspect( 1, 0, 0 ) );
-                }
+                Aspects.Add( i, new INEAspect() );
             }
+
+            DistributionValid = false;
+        }
+
+        public INEAspectGroup( AspectType type )
+        {
+            Type = type;
+            Aspects = new Dictionary<int, INEAspect>();
+            for( int i = 0; i < 6; i++ )
+            {
+                Aspects.Add( i, new INEAspect() );
+            }
+
+            DistributionValid = false;
         }
 
         public void SetDistribution( int key, float value )
@@ -168,6 +187,8 @@ namespace IncarnationEngine
 
         private void CalculateRanks( float totalRanks, bool current = false, bool projected = false )
         {
+            bool distributionValid = false;
+
             if( Aspects != null )
             {
                 int count = 0;
@@ -193,6 +214,8 @@ namespace IncarnationEngine
 
                 if( currentDistributed || projectedDistributed )
                 {
+                    distributionValid = true;
+
                     foreach( KeyValuePair<int, INEAspect> aspect in Aspects )
                     {
                         if( aspect.Value != null )
@@ -211,7 +234,7 @@ namespace IncarnationEngine
                         }
                     }
 
-                    float evenRankPower = INE.RankPower( count );
+                    float evenRankPower = INE.Char.EvenRankPower( count );
                     float evenWeightFactor = Mathf.Log( INE.Char.EvenWeightedRatio * Mathf.Pow( count, INE.Char.WeightPower ) );
 
                     if( currentDistributed )
@@ -232,10 +255,10 @@ namespace IncarnationEngine
                 }
 
                 if( current )
-                    CurrentRankMultiplier = currentAspect.RankMultiplier;
+                    CurrentRankBonus = currentAspect.RankMultiplier;
 
                 if( projected )
-                    ProjectedRankMultiplier = projectedAspect.RankMultiplier;
+                    ProjectedRankBonus = projectedAspect.RankMultiplier;
 
                 foreach( KeyValuePair<int, INEAspect> aspect in Aspects )
                 {
@@ -252,6 +275,8 @@ namespace IncarnationEngine
                     }
                 }
             }
+
+            DistributionValid = distributionValid;
         }
 
         private struct CalculationSet
@@ -276,7 +301,12 @@ namespace IncarnationEngine
         public INEAspectElement Current;
         public INEAspectElement Projected;
 
-        public INEAspect() { }
+        public INEAspect()
+        {
+            Modifier = 1;
+            TargetDistribution = 0;
+            Current.Distribution = 0;
+        }
 
         public INEAspect( float modifer, float currentDistribution, float targetDistribution )
         {
