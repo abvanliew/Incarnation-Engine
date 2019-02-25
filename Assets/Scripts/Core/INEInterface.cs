@@ -5,14 +5,17 @@ namespace IncarnationEngine
 {
     public class INEInterface
     {
-        public HeaderUI Header;
-        public LoginUI Login;
-        public APITestUI ApiTest;
-        public TeamListUI TeamList;
-        public NewTeamUI NewTeam;
-        public TeamUI Team;
-        public CharacterBuilderUI CharacterBuilder;
-        public CharacterListUI CharacterList;
+        private readonly HeaderUI Header;
+        private readonly LoginUI Login;
+        private readonly APITestUI ApiTest;
+        private readonly TeamListUI TeamList;
+        private readonly NewTeamUI NewTeam;
+        private readonly TeamUI Team;
+        private readonly CharacterBuilderUI CharacterBuilder;
+        private readonly CharacterListUI CharacterList;
+
+        private readonly ConfirmationUI ConfirmationDialog;
+        private readonly RectTransform GreyScreen;
 
         public INEInterface( INEInterfaceList newUI )
         {
@@ -24,6 +27,8 @@ namespace IncarnationEngine
             Team = newUI.Team;
             CharacterBuilder = newUI.CharacterBuilder;
             CharacterList = newUI.CharacterList;
+            ConfirmationDialog = newUI.ConfirmationDialog;
+            GreyScreen = newUI.GreyScreen;
         }
 
         public void OpenLogin()
@@ -65,6 +70,31 @@ namespace IncarnationEngine
             }
         }
 
+        public bool OpenConfirmationDialog( ConfirmationClick click, string question, 
+            bool yesButton = false, bool noButton = false, bool okButton = false, bool cancelButton = false )
+        {
+            bool validDialog = false;
+
+            if( click != null && ( yesButton || noButton || okButton || cancelButton ) )
+            {
+                validDialog = ConfirmationDialog.SetQuestion( click, question, yesButton, noButton, okButton, cancelButton );
+
+                if( validDialog )
+                {
+                    GreyScreen.gameObject.SetActive( true );
+                    ConfirmationDialog.gameObject.SetActive( true );
+                }
+            }
+
+            return validDialog;
+        }
+
+        public void CloseDialog()
+        {
+            GreyScreen.gameObject.SetActive( false );
+            ConfirmationDialog.gameObject.SetActive( false );
+        }
+
         private void SwitchMenu( bool login = false, bool apiTest = false, bool teamList = false, bool newTeam = false, bool team = false,
             bool characterBuilder = false, bool characterList = false )
         {
@@ -95,5 +125,7 @@ namespace IncarnationEngine
         [SerializeField] public TeamUI Team;
         [SerializeField] public CharacterBuilderUI CharacterBuilder;
         [SerializeField] public CharacterListUI CharacterList;
+        [SerializeField] public ConfirmationUI ConfirmationDialog;
+        [SerializeField] public RectTransform GreyScreen;
     }
 }

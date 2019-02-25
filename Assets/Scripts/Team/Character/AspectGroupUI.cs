@@ -136,6 +136,17 @@ namespace IncarnationEngine
             }
         }
 
+        public void Activate( bool state = true )
+        {
+            if( AspectGroup != null )
+            {
+                foreach( KeyValuePair<int, AspectItemUI> item in AspectsUI )
+                {
+                    item.Value.Activate( state );
+                }
+            }
+        }
+
         private void UpdateWarning()
         {
             if( AspectGroup != null )

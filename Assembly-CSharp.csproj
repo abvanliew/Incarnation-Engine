@@ -89,6 +89,7 @@
     <Compile Include="Assets\Scripts\Team\TeamSelectorUI.cs" />
     <Compile Include="Assets\Scripts\Team\TeamUI.cs" />
     <Compile Include="Assets\Scripts\UI\APITestUI.cs" />
+    <Compile Include="Assets\Scripts\UI\ConfirmationUI.cs" />
     <Compile Include="Assets\Scripts\UI\HeaderUI.cs" />
     <Compile Include="Assets\Scripts\UI\LoginUI.cs" />
     <Compile Include="Assets\Scripts\UI\TooltipUI.cs" />

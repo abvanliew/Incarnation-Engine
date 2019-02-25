@@ -33,6 +33,7 @@ namespace IncarnationEngine
         public AspectGroupUI SkillGroup;
 
         public Button DoneButton;
+        public Button CancelButton;
 
         private bool InitialCharacter;
         private INECharacter ReferenceCharacter;
@@ -77,6 +78,30 @@ namespace IncarnationEngine
             //close out and open whatever else was under it
         }
 
+        public void ClickCancel()
+        {
+            bool opened = INE.UI.OpenConfirmationDialog( ConfirmCancel, "Discard changes?", yesButton: true, noButton: true );
+
+            if( opened )
+            {
+                Activate( false );
+            }
+        }
+
+        public void ConfirmCancel( ConfirmationOption clicked )
+        {
+            //if( clicked == ConfirmationOption.Yes )
+            //{
+
+            //}
+            //else if( clicked == ConfirmationOption.No )
+            //{
+
+            //}
+            INE.UI.CloseDialog();
+            Activate( true );
+        }
+
         public void ChangeName()
         {
             CheckNameInvalid();
@@ -114,7 +139,27 @@ namespace IncarnationEngine
 
         public void Activate( bool state = true )
         {
+            //Tabs
+            AppearanceTabButton.interactable = state;
+            AspectsTabButton.interactable = state;
+            InventoryTabButton.interactable = state;
+            ActionsTabButton.interactable = state;
+            SpellsTabButton.interactable = state;
+            SummaryTabButton.interactable = state;
 
+            //Character Header
+            FullNameInput.interactable = state;
+            RaceSelector.interactable = state;
+            ExpProjection.interactable = ProjectionSelector.value == 1 ? state : false;
+            ProjectionSelector.interactable = state;
+
+            //Aspects
+            AttributeGroup.Activate( state );
+            SkillGroup.Activate( state );
+
+            //Overlay
+            DoneButton.interactable = state;
+            CancelButton.interactable = state;
         }
 
         private void Start()

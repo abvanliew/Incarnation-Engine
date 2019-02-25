@@ -83,5 +83,10 @@ namespace IncarnationEngine
             if( Parent != null )
                 Parent.SetDistribution( Key, TargetDistribution.value );
         }
+
+        public void Activate( bool state = true )
+        {
+            TargetDistribution.interactable = state;
+        }
     }
 }
