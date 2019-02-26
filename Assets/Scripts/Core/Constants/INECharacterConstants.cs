@@ -27,7 +27,7 @@ namespace IncarnationEngine
         {
             BaseAspect = 25;
             RetrainingIncrement = 250;
-            RetrainingRatio = 0.01f;
+            RetrainingRatio = 0.8f;
             ExcessExpConversion = 0.25f;
             WeightPower = 2;
             EvenWeightedRatio = 3f * Mathf.Pow( 1f / 3f, WeightPower );
@@ -102,7 +102,7 @@ namespace IncarnationEngine
         {
             float retraining = 0;
 
-            if( currentExp > 0 && expGained > 0 && tier > 0 && tier < 5 )
+            if( currentExp > 0 && expGained > 0 && tier > 0 && tier <= 5 )
             {
                 //find max tier and cap current exp at it (it should never be above it)
                 float maxExp = MaxExp( tier );

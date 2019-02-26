@@ -27,6 +27,7 @@ namespace IncarnationEngine
         public Slider ExpProjection;
         public Text ProjectionLabel;
         public Dropdown ProjectionSelector;
+        public Button ResetButton;
 
         //public PerksUI PerksGroup;
         public AspectGroupUI AttributeGroup;
@@ -70,6 +71,17 @@ namespace IncarnationEngine
         public void ClickSummaryTab()
         {
 
+        }
+
+        public void ClickReset()
+        {
+            if( CurrentCharacter != null )
+            {
+                CurrentCharacter.ResetAspects();
+                AttributeGroup.UpdateTargets();
+                SkillGroup.UpdateTargets();
+                Recalculate();
+            }
         }
 
         public void ClickDone()
@@ -126,6 +138,7 @@ namespace IncarnationEngine
         {
             if( ExpProjection.value < CurrentCharacter.Exp )
                 ExpProjection.value = CurrentCharacter.Exp;
+            Recalculate();
         }
 
         public void SetCharacter( INECharacter targetCharacter, bool initialCharacter = false )

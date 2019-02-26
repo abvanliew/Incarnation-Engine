@@ -61,7 +61,7 @@ namespace IncarnationEngine
             DistributionValid = false;
         }
 
-        public void SetDistribution( int key, float value )
+        public void SetTargetDistribution( int key, float value )
         {
             if( Aspects != null )
             {
@@ -70,7 +70,7 @@ namespace IncarnationEngine
             }
         }
 
-        public void SetDistribution( Dictionary<int, float> newDistribution )
+        public void SetTargetDistribution( Dictionary<int, float> newDistribution )
         {
             if( Aspects != null && newDistribution != null )
             {
@@ -79,6 +79,44 @@ namespace IncarnationEngine
                     if( Aspects.ContainsKey( aspect.Key ) )
                     {
                         Aspects[aspect.Key].TargetDistribution = 
+                            aspect.Value < 0 ? 0 : aspect.Value > INE.Char.MaxDistribution ? INE.Char.MaxDistribution : aspect.Value;
+                    }
+                }
+            }
+        }
+
+        public void ResetTargetDistributions()
+        {
+            if( Aspects != null )
+            {
+                foreach( KeyValuePair<int, INEAspect> aspect in Aspects )
+                {
+                    if( aspect.Value != null )
+                    {
+                        aspect.Value.TargetDistribution = aspect.Value.Current.Distribution;
+                    }
+                }
+            }
+        }
+
+        public void SetCurrentDistribution( int key, float value )
+        {
+            if( Aspects != null )
+            {
+                if( Aspects.ContainsKey( key ) )
+                    Aspects[key].Current.Distribution = value < 0 ? 0 : value > INE.Char.MaxDistribution ? INE.Char.MaxDistribution : value;
+            }
+        }
+
+        public void SetCurrentDistribution( Dictionary<int, float> newDistribution )
+        {
+            if( Aspects != null && newDistribution != null )
+            {
+                foreach( KeyValuePair<int, float> aspect in newDistribution )
+                {
+                    if( Aspects.ContainsKey( aspect.Key ) )
+                    {
+                        Aspects[aspect.Key].Current.Distribution =
                             aspect.Value < 0 ? 0 : aspect.Value > INE.Char.MaxDistribution ? INE.Char.MaxDistribution : aspect.Value;
                     }
                 }

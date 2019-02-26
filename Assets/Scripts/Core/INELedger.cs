@@ -75,11 +75,29 @@ namespace IncarnationEngine
         private void CreateInitialCharacter()
         {
             InitialCharacter = new INECharacter();
-            INE.UI.OpenCharacterBuilder( InitialCharacter, true );
+            //INE.UI.OpenCharacterBuilder( InitialCharacter, true );
+            INE.UI.OpenCharacterBuilder( Characters[0], false );
         }
 
         public void NewCharacterBuild()
         {
+            Characters.Add( new INECharacter(
+                    "Commander - Human Fighter", 0, INE.Data.Archetypes[0], 5, 800, new Dictionary<int, float>()
+                    {
+                        { 0, 50f }, //Strength
+                        { 2, 30f }, //Perception
+                        { 3, 10f }, //Speed
+                        { 4, 80f }, //Endurance
+                        { 5, 60f }  //resistance
+                    },
+                    new Dictionary<int, float>()
+                    {
+                        { 0, 75f }, //Striking
+                        { 2, 95f }, //Defending
+                        { 3, 40f }, //Disruption
+                        { 4, 50f }  //Combat Mobility
+                    }
+                ) );
             CreateInitialCharacter();
         }
     }

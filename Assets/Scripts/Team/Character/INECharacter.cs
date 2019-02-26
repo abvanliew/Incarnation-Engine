@@ -35,11 +35,42 @@ namespace IncarnationEngine
             DefaultLayout = new INELayout();
         }
 
+        public INECharacter( string fullName, int race, INEArchetype archetype, int tier, float exp,
+            Dictionary<int, float> attributeDistributions, Dictionary<int, float> skillDistributions )
+        {
+            FullName = fullName ?? "New Character";
+            Tier = tier < 1 ? 1 : tier > 5 ? 5 : tier;
+            Exp = exp < 0 ? 0 : exp > MaxExp ? MaxExp : exp;
+            Archetype = archetype ?? new INEArchetype();
+            PopulateAspects();
+            ChangeRace( RaceID );
+            Attributes.SetTargetDistribution( attributeDistributions );
+            Attributes.SetCurrentDistribution( attributeDistributions );
+            Skills.SetTargetDistribution( skillDistributions );
+            Skills.SetCurrentDistribution( skillDistributions );
+            Perks = new List<int>();
+            DefaultLayout = new INELayout();
+        }
+
         public void ChangeRace( int newRace )
         {
             if( INE.Data.Races.ContainsKey( newRace ) )
             {
+                RaceID = newRace;
                 Attributes.SetModifiers( INE.Data.Races[newRace].RacialModifersPairs );
+            }
+        }
+
+        public void ResetAspects( bool resetAttributes = true, bool resetSkills = true )
+        {
+            if( resetAttributes && Attributes != null )
+            {
+                Attributes.ResetTargetDistributions();
+            }
+
+            if( resetSkills && Skills != null )
+            {
+                Skills.ResetTargetDistributions();
             }
         }
 

@@ -32,6 +32,14 @@ namespace IncarnationEngine
             }
         }
 
+        public void UpdateTarget( float distribution )
+        {
+            if( Parent != null )
+            {
+                TargetDistribution.value = distribution;
+            }
+        }
+
         public void SetInitial( int rank )
         {
             if( Parent != null )

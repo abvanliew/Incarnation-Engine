@@ -40,6 +40,22 @@ namespace IncarnationEngine
             }
         }
 
+        public void UpdateTargets()
+        {
+            if( Parent != null && AspectGroup != null )
+            {
+                foreach( KeyValuePair<int, INEAspect> aspect in AspectGroup.Aspects )
+                {
+                    if( aspect.Value != null && AspectsUI.ContainsKey( aspect.Key ) )
+                    {
+                        AspectsUI[aspect.Key].UpdateTarget( aspect.Value.TargetDistribution );
+                    }
+                }
+
+                UpdateWarning();
+            }
+        }
+
         public void SetInitial()
         {
             if( Parent != null && AspectGroup != null )
@@ -130,7 +146,7 @@ namespace IncarnationEngine
         {
             if( Parent != null && AspectGroup.Aspects != null && AspectGroup.Aspects.ContainsKey( key ) )
             {
-                AspectGroup.SetDistribution( key, value );
+                AspectGroup.SetTargetDistribution( key, value );
                 Parent.Recalculate();
                 UpdateWarning();
             }
