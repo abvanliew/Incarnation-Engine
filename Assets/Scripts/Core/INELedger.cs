@@ -76,28 +76,86 @@ namespace IncarnationEngine
         {
             InitialCharacter = new INECharacter();
             //INE.UI.OpenCharacterBuilder( InitialCharacter, true );
-            INE.UI.OpenCharacterBuilder( Characters[0], false );
+            INE.UI.OpenCharacterBuilder( Characters[1], false );
         }
 
         public void NewCharacterBuild()
         {
-            Characters.Add( new INECharacter(
-                    "Commander - Human Fighter", 0, INE.Data.Archetypes[0], 5, 800, new Dictionary<int, float>()
+            //Characters.Add( 
+            //    new INECharacter(
+            //        "Commander - Default", 0, INE.Data.Archetypes[0], 5, 400, new Dictionary<int, float>()
+            //        {
+            //            { 0, 120f }, //Strength
+            //            { 1, 120f }, //Finesse
+            //            { 2, 120f }, //Perception
+            //            { 3, 120f }, //Speed
+            //            { 4, 120f }, //Endurance
+            //            { 5, 120f }, //Resistance
+            //            { 6, 120f }, //Potency
+            //            { 7, 120f }, //Essence
+            //            { 8, 120f }  //Affinity
+            //        },
+            //        new Dictionary<int, float>()
+            //        {
+            //            { 0, 120f }, //Striking
+            //            { 1, 120f }, //Shooting
+            //            { 2, 120f }, //Defending
+            //            { 3, 120f }, //Disruption
+            //            { 4, 120f }, //Combat Mobility
+            //            { 5, 120f }, //Stealth
+            //            { 6, 120f }, //Spell Mastery
+            //            { 7, 120f }, //Fire
+            //            { 8, 120f }, //Frost
+            //            { 9, 120f }, //Electricity
+            //            { 10, 120f }, //Water
+            //            { 11, 120f }, //Benevolent
+            //            { 12, 120f }, //Malevolent
+            //            { 13, 120f }  //Earth
+            //        }
+            //    ) );
+
+            Characters.Add(
+                new INECharacter(
+                    "Commander - Tank", 0, INE.Data.Archetypes[0], 5, 400, new Dictionary<int, float>()
                     {
-                        { 0, 50f }, //Strength
-                        { 2, 30f }, //Perception
-                        { 3, 10f }, //Speed
+                        { 0, 80f }, //Strength
+                        { 2, 60f }, //Perception
+                        { 3, 20f }, //Speed
                         { 4, 80f }, //Endurance
-                        { 5, 60f }  //resistance
+                        { 5, 60f } //Resistance
                     },
                     new Dictionary<int, float>()
                     {
-                        { 0, 75f }, //Striking
-                        { 2, 95f }, //Defending
+                        { 0, 80f }, //Striking
+                        { 2, 120f }, //Defending
                         { 3, 40f }, //Disruption
-                        { 4, 50f }  //Combat Mobility
+                        { 4, 40f } //Combat Mobility
                     }
                 ) );
+
+            Characters.Add(
+                new INECharacter(
+                    "Commander - Evocation", 0, INE.Data.Archetypes[0], 5, 400, new Dictionary<int, float>()
+                    {
+                        { 2, 40f }, //Perception
+                        { 4, 20f }, //Endurance
+                        { 5, 25f }, //Resistance
+                        { 6, 120f }, //Potency
+                        { 7, 100f }, //Essence
+                        { 8, 75f } //Affinity
+                    },
+                    new Dictionary<int, float>()
+                    {
+                        { 2, 40f }, //Defending
+                        { 4, 20f }, //Combat Mobility
+                        { 6, 80f }, //Spell Mastery
+                        { 7, 120f }, //Fire
+                        { 8, 120f }, //Frost
+                        { 9, 120f }, //Electricity
+
+                    }
+                ) );
+
             CreateInitialCharacter();
         }
     }

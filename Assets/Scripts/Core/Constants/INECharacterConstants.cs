@@ -25,20 +25,20 @@ namespace IncarnationEngine
 
         public INECharacterConstants()
         {
-            BaseAspect = 25;
+            BaseAspect = 100;
             RetrainingIncrement = 250;
             RetrainingRatio = 0.8f;
             ExcessExpConversion = 0.25f;
             WeightPower = 2;
             EvenWeightedRatio = 3f * Mathf.Pow( 1f / 3f, WeightPower );
-            BaseRankPower = 0.5f;
+            BaseRankPower = 0.55f;
             UnevenRankPower = 1.5f;
             MaxDistribution = 120;
             MinModifier = 0.05f;
             ExpPerTier = 1000;
-            BaseAttributeRanks = 1000;
-            AttributeRankIncrementPerTier = 500;
-            SkillRankRatio = 0.8f;
+            BaseAttributeRanks = 500;
+            AttributeRankIncrementPerTier = 250;
+            SkillRankRatio = 0.42f;
         }
 
         public float EvenRankPower( int aspectCount )
@@ -65,7 +65,7 @@ namespace IncarnationEngine
 
         public float AttributeRanks( float exp, int tier )
         {
-            float ranks = 0;
+            float ranks = BaseAttributeRanks;
 
             if( tier > 0 && tier <= 5 && exp > 0 )
             {
