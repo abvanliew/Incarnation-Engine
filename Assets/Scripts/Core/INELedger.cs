@@ -66,7 +66,10 @@ namespace IncarnationEngine
                 loaded = true;
                 List<INECharacterResponse> characters = await INE.PostData<List<INECharacterResponse>>( "team/character/list", selectTeam );
                 if( characters.Count == 0 )
-                    INE.UI.OpenCharacterBuilder( null );
+                {
+                    CreateInitialCharacter();
+                }
+                //else load up the team ui stuff
             }
 
             return loaded;
@@ -75,8 +78,8 @@ namespace IncarnationEngine
         private void CreateInitialCharacter()
         {
             InitialCharacter = new INECharacter();
-            //INE.UI.OpenCharacterBuilder( InitialCharacter, true );
-            INE.UI.OpenCharacterBuilder( Characters[1], false );
+            INE.UI.OpenCharacterBuilder( InitialCharacter, true );
+            //INE.UI.OpenCharacterBuilder( Characters[1], false );
         }
 
         public void NewCharacterBuild()

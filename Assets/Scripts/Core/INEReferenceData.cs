@@ -25,7 +25,7 @@ namespace IncarnationEngine
                 1f,
                 1f,
                 1f,
-                1.35f } ) );
+                1.15f } ) );
             Races.Add( 1, new INERace( "Ursaun", true, new List<float>() {
                 1.7f,
                 .95f,
@@ -46,7 +46,7 @@ namespace IncarnationEngine
                 .95f,
                 1.6f,
                 .95f,
-                1.2f } ) );
+                1.1f } ) );
             Races.Add( 4, new INERace( "Rhokalan", true, new List<float>() {
                 1.6f,
                 .75f,
@@ -67,7 +67,7 @@ namespace IncarnationEngine
                 1.2f,
                 1.05f,
                 1.1f,
-                1.1f } ) );
+                1.05f } ) );
         }
 
         private void LoadArchetypes()

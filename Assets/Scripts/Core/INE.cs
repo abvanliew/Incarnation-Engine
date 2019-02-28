@@ -63,20 +63,24 @@ namespace IncarnationEngine
             TestStart();
         }
 
-        private void TestStart()
+        private async void TestStart()
         {
             Data.LoadBaseData();
-            Ledger.NewCharacterBuild();
+            //Ledger.NewCharacterBuild();
 
-            //bool authorized = await LoadSession();
+            bool authorized = await LoadSession();
 
-            //if( authorized )
-            //{
-            //    bool listLoaded = await Ledger.LoadTeamList();
+            if( authorized )
+            {
+                bool listLoaded = await Ledger.LoadTeamList();
 
-            //    //if( listLoaded )
-            //    //    UI.OpenTeamList();
-            //}
+                if( listLoaded )
+                    UI.OpenTeamList();
+            }
+            else
+            {
+                UI.OpenLogin();
+            }
         }
 
         public static async Task<bool> Login( string username, string password, 
