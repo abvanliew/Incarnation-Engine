@@ -21,8 +21,8 @@ namespace IncarnationEngine
             };
             SkillNames = new Dictionary<int, string>()
             {
-                { 0, "Striking" }, { 1, "Shooting" }, { 2, "Defending" }, { 3, "Disruption" }, { 4, "Combat Mobility" }, { 5, "Stealth" }, { 6, "Spell Mastery" },
-                { 7, "Fire" }, { 8, "Frost" }, { 9, "Electricity" }, { 10, "Water" }, { 11, "Benevolent" }, { 12, "Malevolent" }, { 13, "Earth" }
+                { 0, "Striking" }, { 1, "Shooting" }, { 2, "Defending" }, { 3, "Disruption" }, { 4, "Combat Mobility" }, { 5, "Stealth" },
+                { 6, "Spell Mastery" }, { 7, "Fire" }, { 8, "Frost" }, { 9, "Electricity" }, { 10, "Water" }, { 11, "Benevolent" }, { 12, "Malevolent" }, { 13, "Earth" }
             };
             CurrencyFormats = new string[] { "{0} Platinum", "{0} Gold", "{0} Silver", "{0} Copper" };
 

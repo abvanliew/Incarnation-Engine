@@ -20,21 +20,25 @@ namespace IncarnationEngine
 
         public void ClickYes()
         {
+            INE.UI.CloseDialog();
             Click( ConfirmationOption.Yes );
         }
 
         public void ClickNo()
         {
+            INE.UI.CloseDialog();
             Click( ConfirmationOption.No );
         }
 
         public void ClickOk()
         {
+            INE.UI.CloseDialog();
             Click( ConfirmationOption.Ok );
         }
 
         public void ClickCancel()
         {
+            INE.UI.CloseDialog();
             Click( ConfirmationOption.Cancel );
         }
 

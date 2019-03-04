@@ -86,8 +86,28 @@ namespace IncarnationEngine
 
         public void ClickDone()
         {
-            //confirm initial character?
-            //close out and open whatever else was under it
+            Recalculate();
+            if( CurrentCharacter.DistributionValid )
+            {
+
+                bool opened = INE.UI.OpenConfirmationDialog( ConfirmDone, "Commit to Character build?", yesButton: true, noButton: true );
+
+                if( opened )
+                {
+                    Activate( false );
+                }
+            }
+        }
+
+        public void ConfirmDone( ConfirmationOption clicked )
+        {
+            if( clicked == ConfirmationOption.Yes )
+            {
+                ReferenceCharacter = CurrentCharacter;
+                INE.UI.OpenTeam();
+            }
+            else
+                Activate( true );
         }
 
         public void ClickCancel()
@@ -110,7 +130,6 @@ namespace IncarnationEngine
             //{
 
             //}
-            INE.UI.CloseDialog();
             Activate( true );
         }
 
@@ -338,6 +357,8 @@ namespace IncarnationEngine
                 AttributeGroup.UpdateProjected();
                 SkillGroup.UpdateProjected();
             }
+
+            DoneButton.interactable = CurrentCharacter.DistributionValid;
         }
     }
 }

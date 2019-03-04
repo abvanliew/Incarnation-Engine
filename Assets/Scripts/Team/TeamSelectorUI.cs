@@ -11,21 +11,25 @@ namespace IncarnationEngine
         public Text CharacterCountDisplay;
         public Slider LeadershipDisplay;
 
+        private TeamListUI Parent;
         private INETeamEntryResponse Team;
 
         public void SelectTeam()
         {
-            if( Team != null )
-            {
-                Debug.Log( string.Format( "{0} Selected", Team.TeamName ) );
-                INE.Ledger.LoadTeam( Team.TeamIndex );
-            }
+            LoadTeam();
         }
 
-        public void SetTeam( INETeamEntryResponse team )
+        public void SetTeam( INETeamEntryResponse team, TeamListUI parent )
         {
-            Team = team;
-            RefreshUI();
+            if( team != null && parent != null )
+            {
+                Team = team;
+                Parent = parent;
+                TeamNameDisplay.text = Team.TeamName;
+                WealthDisplay.text = INE.Format.Currency( Team.Wealth );
+                CharacterCountDisplay.text = Team.CharacterCount.ToString();
+                LeadershipDisplay.value = Team.Leadership < 0 ? 0 : Team.Leadership > 1 ? 1 : Team.Leadership;
+            }
         }
 
         public void Activate( bool state = true )
@@ -34,14 +38,17 @@ namespace IncarnationEngine
             LeadershipDisplay.interactable = state;
         }
 
-        private void RefreshUI()
+        private async void LoadTeam()
         {
-            if( Team != null )
+            if( Team != null && Parent != null )
             {
-                TeamNameDisplay.text = Team.TeamName;
-                WealthDisplay.text = INE.Format.Currency( Team.Wealth );
-                CharacterCountDisplay.text = Team.CharacterCount.ToString();
-                LeadershipDisplay.value = Team.Leadership < 0 ? 0 : Team.Leadership > 1 ? 1 : Team.Leadership;
+                Parent.Activate( false );
+                bool loaded = await INE.Ledger.LoadTeam( Team.Team );
+                
+                if( !loaded )
+                {
+                    Parent.Activate();
+                }
             }
         }
     }

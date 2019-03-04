@@ -134,15 +134,15 @@ namespace IncarnationEngine
         public static async Task<T> PostData<T>( string callPath, object data )
         {
             T responseData = default(T);
-            string json = JsonConvert.SerializeObject( data, Formatting.Indented );
-
-            Debug.Log( json );
+            string json = JsonConvert.SerializeObject( data, Formatting.None );
 
             HttpContent res = await Auth.PostData( BaseURL + callPath, json );
 
             if( res != null )
             {
                 INEResponse<T> parse = await res.ReadAsAsync<INEResponse<T>>();
+                //string resJson = await res.ReadAsStringAsync();
+                //Debug.Log( string.Format( "returned: {0}", resJson ) );
                 responseData = parse.body;
             }
 

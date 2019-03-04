@@ -21,6 +21,18 @@ namespace IncarnationEngine
         public List<int> Perks { get; private set; }
         public INELayout DefaultLayout { get; private set; }
         public INECharacter Clone { get { return (INECharacter)this.MemberwiseClone(); } }
+        public bool DistributionValid
+        {
+            get
+            {
+                bool valid = false;
+
+                if( Attributes != null && Skills != null )
+                    valid = Attributes.DistributionValid && Skills.DistributionValid;
+
+                return valid;
+            }
+        }
 
         public INECharacter()
         {

@@ -67,7 +67,7 @@ namespace IncarnationEngine
                     if( i < apiCount )
                     {
                         Teams[i].gameObject.SetActive( true );
-                        Teams[i].SetTeam( INE.Ledger.TeamList[i] );
+                        Teams[i].SetTeam( INE.Ledger.TeamList[i], this );
                     }
                 }
             }

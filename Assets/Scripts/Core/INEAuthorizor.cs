@@ -137,19 +137,19 @@ namespace IncarnationEngine
             {
                 try
                 {
-                    Debug.Log( "Pre post call" );
-                    Debug.Log( bodyJson );
+                    //Debug.Log( "Pre post call" );
+                    //Debug.Log( bodyJson );
 
                     HttpResponseMessage response = await Client.PostAsync( path, new StringContent( bodyJson, Encoding.UTF8, "application/json" ) );
 
-                    Debug.Log( "After post call" );
+                    //Debug.Log( "After post call" );
 
                     if( response != null && response.IsSuccessStatusCode )
                     {
                         returnContent = response.Content;
                     }
 
-                    Debug.Log( returnContent );
+                    //Debug.Log( returnContent );
                 }
                 catch( Exception e )
                 {

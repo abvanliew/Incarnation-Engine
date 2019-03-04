@@ -51,8 +51,8 @@ namespace IncarnationEngine
                 1.6f,
                 .75f,
                 .85f,
-                2f,
                 .85f,
+                2f,
                 .85f } ) );
             Races.Add( 5, new INERace( "Ankekis", true, new List<float>() {
                 1.35f,

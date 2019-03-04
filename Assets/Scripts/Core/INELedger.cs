@@ -36,6 +36,7 @@ namespace IncarnationEngine
                 if( result != null)
                 {
                     teamCreated = result.Team;
+                    Debug.Log( string.Format( "Team {0} created.", result.Team ) );
                 }
             }
 
@@ -63,6 +64,7 @@ namespace IncarnationEngine
             INETeamResponse team = await INE.PostData<INETeamResponse>( "team", selectTeam );
             if( team.Team == teamID )
             {
+                Debug.Log( string.Format( "Team[{1}] {0}, returned", team.TeamName, team.Team ) );
                 loaded = true;
                 List<INECharacterResponse> characters = await INE.PostData<List<INECharacterResponse>>( "team/character/list", selectTeam );
                 if( characters.Count == 0 )
@@ -70,6 +72,10 @@ namespace IncarnationEngine
                     CreateInitialCharacter();
                 }
                 //else load up the team ui stuff
+            }
+            else
+            {
+                Debug.Log( string.Format( "Team[{1}] {0}, mismatch", team.TeamName, team.Team ) );
             }
 
             return loaded;
@@ -165,7 +171,7 @@ namespace IncarnationEngine
 
     public class INETeamEntryResponse
     {
-        public int TeamIndex;
+        public int Team;
         public string TeamName;
         public float Wealth;
         public int CharacterCount;

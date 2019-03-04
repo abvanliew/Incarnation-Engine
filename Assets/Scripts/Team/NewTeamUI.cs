@@ -58,7 +58,7 @@ namespace IncarnationEngine
 
                     if( teamLoaded )
                     {
-                        INE.UI.OpenCharacterBuilder( null );
+                        INE.Ledger.StartInitialCharacter();
                     }
                     else
                     {
